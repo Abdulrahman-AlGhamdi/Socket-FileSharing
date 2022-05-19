@@ -35,8 +35,8 @@ class RequestManagerImpl @Inject constructor() : RequestManager {
             if (respond == "accept") _requestState.value = RequestAccepted
             if (respond == "refuse") _requestState.value = RequestRefused
         } catch (exception: Exception) {
-            _requestState.value = RequestFailed
             exception.printStackTrace()
+            _requestState.value = RequestFailed
         } finally {
             closeClientSocket()
             _requestState.value = Idle

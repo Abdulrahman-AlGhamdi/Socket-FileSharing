@@ -29,7 +29,7 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
             return@withContext
         }
 
-        val uniqueNumber = network.address.hostName.substringAfterLast(".")
+        val uniqueNumber = network.address.canonicalHostName.substringAfterLast(".")
         val (baseIp, networkSize) = network.address.maskWith(network.prefix)
         val addresses = allAddresses(baseIp, networkSize)
         var counter = 0

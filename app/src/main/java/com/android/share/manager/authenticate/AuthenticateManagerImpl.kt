@@ -35,7 +35,7 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
             return@withContext
         }
 
-        val uniqueNumber = network.address.hostName.substringAfterLast(".")
+        val uniqueNumber = network.address.canonicalHostName.substringAfterLast(".")
         _authenticateState.value = StartReceiving(uniqueNumber)
         startServerSocket(network.address)
     }

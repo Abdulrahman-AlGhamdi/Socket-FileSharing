@@ -63,7 +63,7 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
 
         alertDialog = AlertDialog.Builder(requireContext()).apply {
             this.setTitle("Request Connection")
-            this.setMessage("Are you sure you want to connect to $uniqueNumber?")
+            this.setMessage("Are you sure you want to connect to receiver number: $uniqueNumber?")
             this.setCancelable(false)
             this.setPositiveButton("Yes") { _, _ ->
                 requestJob = viewModel.requestConnection(receiver)
@@ -125,8 +125,10 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
                     if (::alertDialog.isInitialized) alertDialog.dismiss()
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("Request Connection")
-                        this.setMessage("The receiver requested for connect is no longer available")
-                        this.setPositiveButton("OK", null)
+                        this.setMessage("The receiver requested is no longer available")
+                        this.setPositiveButton("Scan") { _, _ ->
+                            scanJob = viewModel.startScanning()
+                        }
                     }.show()
                 }
                 RequestState.RequestAccepted -> {

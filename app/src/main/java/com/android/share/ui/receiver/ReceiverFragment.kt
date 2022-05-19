@@ -62,7 +62,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                     if (::alertDialog.isInitialized) alertDialog.dismiss()
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("Request Connection")
-                        this.setMessage("A new connection has requested from ${it.uniqueNumber}")
+                        this.setMessage("A new connection has requested from sender number: ${it.uniqueNumber}")
                         this.setPositiveButton("Accept") { _, _ -> viewModel.acceptConnection(true) }
                         this.setNegativeButton("Refuse") { _, _ -> viewModel.acceptConnection(false) }
                     }.show()

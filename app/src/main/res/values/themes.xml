@@ -1,0 +1,36 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Application" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary color -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Application Font -->
+        <item name="android:fontFamily">@font/quest_regular</item>
+        <!-- Status bar color -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Spinner Style -->
+        <item name="android:spinnerStyle">@style/SpinnerStyle</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
+        <item name="spinnerDropDownItemStyle">@style/SpinnerItem.DropDownItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem.DropDownItem</item>
+    </style>
+
+    <!-- Spinner Style -->
+    <style name="SpinnerStyle" parent="@style/Base.Widget.AppCompat.Spinner.Underlined">
+        <item name="backgroundTint">@color/colorAccent</item>
+    </style>
+
+    <!-- Spinner Item Style -->
+    <style name="SpinnerItem" parent="@android:style/Widget.TextView">
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <!-- Spinner Drop Down Style -->
+    <style name="SpinnerItem.DropDownItem" parent="@android:style/Widget.TextView">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+</resources>

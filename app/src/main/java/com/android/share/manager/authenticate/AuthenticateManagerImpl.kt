@@ -60,8 +60,6 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
     } catch (exception: Exception) {
         exception.printStackTrace()
         _authenticateState.value = Failed
-    } finally {
-        _authenticateState.value = Idle
     }
 
     private fun receiveFile() {
@@ -83,8 +81,6 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
         } catch (exception: Exception) {
             exception.printStackTrace()
             _authenticateState.value = Failed
-        } finally {
-            _authenticateState.value = Idle
         }
     }
 

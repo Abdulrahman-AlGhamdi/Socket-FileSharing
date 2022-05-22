@@ -67,8 +67,8 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                         this.setTitle("Request Connection")
                         this.setMessage("Sender number: ${it.uniqueNumber} would like to share a ${it.name} file")
                         this.setCancelable(false)
-                        this.setPositiveButton("Accept") { _, _ -> viewModel.acceptConnection(true) }
-                        this.setNegativeButton("Refuse") { _, _ -> viewModel.acceptConnection(false) }
+                        this.setPositiveButton("Accept") { _, _ -> viewModel.requestCallback(true) }
+                        this.setNegativeButton("Refuse") { _, _ -> viewModel.requestCallback(false) }
                     }.show()
                 }
                 AuthenticateState.Idle -> Unit

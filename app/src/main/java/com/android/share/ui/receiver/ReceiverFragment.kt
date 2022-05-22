@@ -2,6 +2,7 @@ package com.android.share.ui.receiver
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -48,11 +49,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                 }
                 AuthenticateState.Failed -> {
                     if (::alertDialog.isInitialized) alertDialog.dismiss()
-                    alertDialog = AlertDialog.Builder(requireContext()).apply {
-                        this.setTitle("Request Connection")
-                        this.setMessage("The connection requested has been cancelled by the sender")
-                        this.setNegativeButton("OK", null)
-                    }.show()
+                    authenticateJob = viewModel.startAuthentication()
                 }
                 AuthenticateState.NoInternet -> {
                     binding.receiving.visibility = View.GONE
@@ -63,6 +60,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("Request Connection")
                         this.setMessage("A new connection has requested from sender number: ${it.uniqueNumber}")
+                        this.setCancelable(false)
                         this.setPositiveButton("Accept") { _, _ -> viewModel.acceptConnection(true) }
                         this.setNegativeButton("Refuse") { _, _ -> viewModel.acceptConnection(false) }
                     }.show()

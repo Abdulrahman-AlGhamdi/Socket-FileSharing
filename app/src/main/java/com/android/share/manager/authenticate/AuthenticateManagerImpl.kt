@@ -1,6 +1,7 @@
 package com.android.share.manager.authenticate
 
 import com.android.share.manager.authenticate.AuthenticateManagerImpl.AuthenticateState.*
+import com.android.share.manager.request.RequestCallback
 import com.android.share.model.network.NetworkModel
 import com.android.share.util.readStringFromStream
 import com.android.share.util.writeStringAsStream
@@ -15,11 +16,14 @@ import java.net.NetworkInterface
 import java.net.ServerSocket
 import java.net.Socket
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
 
     private val _authenticateState: MutableStateFlow<AuthenticateState> = MutableStateFlow(Idle)
     override val authenticateState = _authenticateState.asStateFlow()
+    override var requestCallback: RequestCallback? = null
 
     private lateinit var serverSocket: ServerSocket
     private lateinit var clientSocket: Socket
@@ -52,7 +56,7 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
         }.firstOrNull()
     }
 
-    private fun startServerSocket(address: Inet4Address) = try {
+    private suspend fun startServerSocket(address: Inet4Address) = try {
         serverSocket = ServerSocket(52525, 0, address)
         val uniqueNumber = address.canonicalHostName.substringAfterLast(".")
         _authenticateState.value = ReceiveStarted(uniqueNumber)
@@ -60,11 +64,9 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
     } catch (exception: Exception) {
         exception.printStackTrace()
         _authenticateState.value = Failed
-    } finally {
-        _authenticateState.value = Idle
     }
 
-    private fun receiveFile() {
+    private suspend fun receiveFile() {
         clientSocket = serverSocket.accept()
         clientInputStream = clientSocket.getInputStream()
         val request = clientInputStream.readStringFromStream()
@@ -75,17 +77,21 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
         val (connect, name) = request.split(":")
         val uniqueNumber = clientSocket.inetAddress.hostName.substringAfterLast(".")
         if (connect == "share") _authenticateState.value = Connect(uniqueNumber, name)
-    }
 
-    override suspend fun acceptConnection(accept: Boolean) = withContext(Dispatchers.IO) {
-        try {
-            if (accept) clientOutputStream.writeStringAsStream("accept")
-            else clientOutputStream.writeStringAsStream("refuse")
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-            _authenticateState.value = Failed
-        } finally {
-            _authenticateState.value = Idle
+        suspendCoroutine<Boolean> { continuation ->
+            requestCallback = object : RequestCallback {
+                override fun accept() {
+                    clientOutputStream.writeStringAsStream("accept")
+                    _authenticateState.value = Idle
+                    continuation.resume(true)
+                }
+
+                override fun refuse() {
+                    clientOutputStream.writeStringAsStream("refuse")
+                    _authenticateState.value = Idle
+                    continuation.resume(true)
+                }
+            }
         }
     }
 

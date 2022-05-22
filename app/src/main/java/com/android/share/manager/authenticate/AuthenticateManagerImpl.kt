@@ -65,11 +65,11 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
     private fun receiveFile() {
         clientSocket = serverSocket.accept()
         clientInputStream = clientSocket.getInputStream()
-        clientOutputStream = clientSocket.getOutputStream()
         val request = clientInputStream.readStringFromStream()
 
         if (request == "scan") return
 
+        clientOutputStream = clientSocket.getOutputStream()
         val uniqueNumber = clientSocket.inetAddress.hostName.substringAfterLast(".")
         if (request == "connect") _authenticateState.value = Connect(uniqueNumber)
     }

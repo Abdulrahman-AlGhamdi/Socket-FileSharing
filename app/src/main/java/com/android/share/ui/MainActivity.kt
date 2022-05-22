@@ -1,10 +1,10 @@
 package com.android.share.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.android.share.R
 import com.android.share.databinding.ActivityMainBinding
 import com.android.share.util.viewBinding
@@ -21,6 +21,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         navController = findNavController(R.id.fragment_container)
+        navigateToSenderFragment(fileIntent = this.intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        navigateToSenderFragment(fileIntent = intent)
+    }
+
+    private fun navigateToSenderFragment(fileIntent: Intent) {
+        if (fileIntent.action != Intent.ACTION_SEND) return
+        val currentFragmentId = navController.currentDestination?.id
+        if (currentFragmentId != R.id.senderFragment) navController.navigate(R.id.senderFragment)
+        this.intent = fileIntent
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -19,6 +19,14 @@
         app:title="@string/fragment_receive"
         app:titleCentered="true" />
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:indicatorColor="@color/pink"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animation"
         android:layout_width="match_parent"
@@ -67,12 +75,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/initializing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="progress" />
+
     <TextView
         android:id="@+id/internet_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/no_internet_message"
+        android:text="@string/receiver_no_internet_message"
         app:layout_constraintEnd_toEndOf="@+id/internet_header"
         app:layout_constraintStart_toStartOf="@+id/internet_header"
         app:layout_constraintTop_toBottomOf="@+id/internet_header" />

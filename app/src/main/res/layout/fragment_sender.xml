@@ -122,7 +122,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/no_internet_message"
+        android:text="@string/sender_no_internet_message"
         app:layout_constraintEnd_toEndOf="@+id/internet_header"
         app:layout_constraintStart_toStartOf="@+id/internet_header"
         app:layout_constraintTop_toBottomOf="@+id/internet_header" />
@@ -131,7 +131,7 @@
         android:id="@+id/scanning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="animation, progress, sender" />
 
     <androidx.constraintlayout.widget.Group

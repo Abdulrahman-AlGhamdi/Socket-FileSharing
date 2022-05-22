@@ -2,7 +2,6 @@ package com.android.share.ui.receiver
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -42,8 +41,14 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
     private fun getAuthenticateResult() = lifecycleScope.launch(Dispatchers.Main) {
         viewModel.authenticateState.collect {
             when (it) {
-                is AuthenticateState.StartReceiving -> {
+                AuthenticateState.ReceiveInitializing -> {
+                    binding.internet.visibility = View.GONE
+                    binding.receiving.visibility = View.GONE
+                    binding.progress.visibility = View.VISIBLE
+                }
+                is AuthenticateState.ReceiveStarted -> {
                     binding.receiver.text = it.uniqueNumber
+                    binding.progress.visibility = View.GONE
                     binding.internet.visibility = View.GONE
                     binding.receiving.visibility = View.VISIBLE
                 }
@@ -52,6 +57,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                     authenticateJob = viewModel.startAuthentication()
                 }
                 AuthenticateState.NoInternet -> {
+                    binding.progress.visibility = View.GONE
                     binding.receiving.visibility = View.GONE
                     binding.internet.visibility = View.VISIBLE
                 }
@@ -59,7 +65,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                     if (::alertDialog.isInitialized) alertDialog.dismiss()
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("Request Connection")
-                        this.setMessage("A new connection has requested from sender number: ${it.uniqueNumber}")
+                        this.setMessage("Sender number: ${it.uniqueNumber} would like to share a ${it.name} file")
                         this.setCancelable(false)
                         this.setPositiveButton("Accept") { _, _ -> viewModel.acceptConnection(true) }
                         this.setNegativeButton("Refuse") { _, _ -> viewModel.acceptConnection(false) }

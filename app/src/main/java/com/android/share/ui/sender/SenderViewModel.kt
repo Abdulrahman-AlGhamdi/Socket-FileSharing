@@ -1,5 +1,6 @@
 package com.android.share.ui.sender
 
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.share.manager.request.RequestManager
@@ -21,8 +22,8 @@ class SenderViewModel @Inject constructor(
         scanManager.startScanning()
     }
 
-    fun requestConnection(receiver: String) = viewModelScope.launch {
-        requestManager.requestConnection(receiver)
+    fun requestConnection(receiver: String, documentFile: DocumentFile) = viewModelScope.launch {
+        requestManager.requestConnection(receiver, documentFile)
     }
 
     fun closeClientSocket() = requestManager.closeClientSocket()

@@ -15,7 +15,6 @@ import java.net.NetworkInterface
 import java.net.ServerSocket
 import java.net.Socket
 import javax.inject.Inject
-import kotlin.random.Random
 
 class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
 
@@ -35,8 +34,7 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
             return@withContext
         }
 
-        val uniqueNumber = network.address.canonicalHostName.substringAfterLast(".")
-        _authenticateState.value = StartReceiving(uniqueNumber)
+        _authenticateState.value = ReceiveInitializing
         startServerSocket(network.address)
     }
 
@@ -56,10 +54,14 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
 
     private fun startServerSocket(address: Inet4Address) = try {
         serverSocket = ServerSocket(52525, 0, address)
+        val uniqueNumber = address.canonicalHostName.substringAfterLast(".")
+        _authenticateState.value = ReceiveStarted(uniqueNumber)
         while (!serverSocket.isClosed) receiveFile()
     } catch (exception: Exception) {
         exception.printStackTrace()
         _authenticateState.value = Failed
+    } finally {
+        _authenticateState.value = Idle
     }
 
     private fun receiveFile() {
@@ -70,8 +72,9 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
         if (request == "scan") return
 
         clientOutputStream = clientSocket.getOutputStream()
+        val (connect, name) = request.split(":")
         val uniqueNumber = clientSocket.inetAddress.hostName.substringAfterLast(".")
-        if (request == "connect") _authenticateState.value = Connect(uniqueNumber)
+        if (connect == "share") _authenticateState.value = Connect(uniqueNumber, name)
     }
 
     override suspend fun acceptConnection(accept: Boolean) = withContext(Dispatchers.IO) {
@@ -81,6 +84,8 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
         } catch (exception: Exception) {
             exception.printStackTrace()
             _authenticateState.value = Failed
+        } finally {
+            _authenticateState.value = Idle
         }
     }
 
@@ -98,8 +103,8 @@ class AuthenticateManagerImpl @Inject constructor() : AuthenticateManager {
         object Idle : AuthenticateState()
         object Failed : AuthenticateState()
         object NoInternet : AuthenticateState()
-        data class StartReceiving(val uniqueNumber: String) : AuthenticateState()
-        data class Connect(val uniqueNumber: String, val number: Int = Random.nextInt()) :
-            AuthenticateState()
+        object ReceiveInitializing : AuthenticateState()
+        data class ReceiveStarted(val uniqueNumber: String) : AuthenticateState()
+        data class Connect(val uniqueNumber: String, val name: String) : AuthenticateState()
     }
 }

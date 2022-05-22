@@ -1,8 +1,12 @@
 package com.android.share.ui.sender
 
 import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,11 +15,13 @@ import com.android.share.R
 import com.android.share.databinding.FragmentSenderBinding
 import com.android.share.manager.request.RequestManagerImpl.RequestState
 import com.android.share.manager.scan.ScanManagerImpl.ScanState
+import com.android.share.util.showSnackBar
 import com.android.share.util.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.*
 
 @AndroidEntryPoint
 class SenderFragment : Fragment(R.layout.fragment_sender) {
@@ -24,6 +30,7 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
     private val viewModel by viewModels<SenderViewModel>()
     private lateinit var senderAdapter: SenderAdapter
     private lateinit var alertDialog: AlertDialog
+    private var fileUri = Uri.EMPTY
 
     private lateinit var scanJob: Job
     private lateinit var scanResultJob: Job
@@ -55,21 +62,6 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
             scanJob = viewModel.startScanning()
             true
         }
-    }
-
-    private fun requestConnection(receiver: String) {
-        if (::requestJob.isInitialized) requestJob.cancel()
-        val uniqueNumber = receiver.substringAfterLast(".")
-
-        alertDialog = AlertDialog.Builder(requireContext()).apply {
-            this.setTitle("Request Connection")
-            this.setMessage("Are you sure you want to connect to receiver number: $uniqueNumber?")
-            this.setCancelable(false)
-            this.setPositiveButton("Yes") { _, _ ->
-                requestJob = viewModel.requestConnection(receiver)
-            }
-            this.setNegativeButton("Cancel", null)
-        }.show()
     }
 
     private fun getScanResult() = lifecycleScope.launch(Dispatchers.Main) {
@@ -151,6 +143,48 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
                 RequestState.Idle -> Unit
             }
         }
+    }
+
+    private fun requestConnection(receiver: String) {
+        if (::requestJob.isInitialized) requestJob.cancel()
+        val documentFile = if (fileUri != Uri.EMPTY) getFileFromUri(fileUri) else null
+
+        if (documentFile == null) {
+            requireView().showSnackBar("Please choose file in order to share it")
+            return
+        }
+
+        val uniqueNumber = receiver.substringAfterLast(".")
+        val name = documentFile.name ?: UUID.randomUUID().toString()
+
+        alertDialog = AlertDialog.Builder(requireContext()).apply {
+            this.setTitle("Request File Sending")
+            this.setMessage("Are you sure you want to send $name file to receiver number: $uniqueNumber?")
+            this.setCancelable(false)
+            this.setPositiveButton("Yes") { _, _ ->
+                requestJob = viewModel.requestConnection(receiver, documentFile)
+            }
+            this.setNegativeButton("Cancel", null)
+        }.show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val fileIntent = requireActivity().intent
+        if (fileIntent.action != Intent.ACTION_SEND) return
+        fileUri = fileIntent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as Uri
+    }
+
+    private fun getFileFromUri(fileUri: Uri): DocumentFile? {
+        val documentFile = DocumentFile.fromSingleUri(requireContext(), fileUri) ?: return null
+        val fileSize = documentFile.length().div(1024 * 1024)
+
+        if (fileSize > 150) {
+            requireView().showSnackBar("The file size is over 150MB")
+            return null
+        }
+
+        return documentFile
     }
 
     override fun onDestroyView() {

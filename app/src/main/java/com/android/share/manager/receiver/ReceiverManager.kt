@@ -1,4 +1,4 @@
-package com.android.share.manager.authenticate
+package com.android.share.manager.receiver
 
 import com.android.share.manager.sender.SenderCallback
 import kotlinx.coroutines.flow.StateFlow

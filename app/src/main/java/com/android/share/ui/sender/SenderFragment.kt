@@ -158,7 +158,6 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
                         this.setView(dialogView)
                         this.setCancelable(false)
                         this.setTitle("Sending ${it.name} file")
-                        this.setPositiveButton("OK", null)
                     }.show()
                 }
                 is SendState.SendComplete -> {

@@ -1,6 +1,9 @@
 package com.android.share.ui.receiver
 
 import android.app.AlertDialog
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -9,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.share.R
 import com.android.share.databinding.FragmentReceiverBinding
-import com.android.share.manager.authenticate.ReceiverManagerImpl.ReceiveState
+import com.android.share.manager.receiver.ReceiverManagerImpl.ReceiveState
 import com.android.share.util.viewBinding
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +25,8 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
 
     private val binding by viewBinding(FragmentReceiverBinding::bind)
     private val viewModel by viewModels<ReceiverViewModel>()
+
+    private lateinit var cm: ConnectivityManager
     private var progressDialog: AlertDialog? = null
     private lateinit var progress: LinearProgressIndicator
     private lateinit var alertDialog: AlertDialog
@@ -33,12 +38,32 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        authenticateJob = viewModel.startAuthentication()
-        authenticateResultJob = getAuthenticateResult()
     }
 
     private fun init() {
+        cm = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        cm.registerDefaultNetworkCallback(networkCallback)
         binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+    }
+
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                dismissDialog()
+                authenticateJob = viewModel.startAuthentication()
+                authenticateResultJob = getAuthenticateResult()
+            }
+        }
+
+        override fun onLost(network: Network) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                dismissDialog()
+                viewModel.closeServerSocket()
+                binding.progress.visibility = View.GONE
+                binding.receiving.visibility = View.GONE
+                binding.internet.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun getAuthenticateResult() = lifecycleScope.launch(Dispatchers.Main) {
@@ -60,12 +85,6 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                 ReceiveState.Failed -> {
                     dismissDialog()
                     authenticateJob = viewModel.startAuthentication()
-                }
-                ReceiveState.NoInternet -> {
-                    dismissDialog()
-                    binding.progress.visibility = View.GONE
-                    binding.receiving.visibility = View.GONE
-                    binding.internet.visibility = View.VISIBLE
                 }
                 is ReceiveState.Connect -> {
                     dismissDialog()
@@ -91,7 +110,6 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                         this.setView(dialogView)
                         this.setCancelable(false)
                         this.setTitle("Receiving ${it.name} file")
-                        this.setPositiveButton("OK", null)
                     }.show()
                 }
                 is ReceiveState.ReceiveComplete -> {
@@ -117,6 +135,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
         if (::authenticateJob.isInitialized) authenticateJob.cancel()
         if (::authenticateResultJob.isInitialized) authenticateResultJob.cancel()
         viewModel.closeServerSocket()
+        cm.unregisterNetworkCallback(networkCallback)
         super.onDestroyView()
     }
 }

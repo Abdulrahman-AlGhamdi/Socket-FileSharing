@@ -1,7 +1,7 @@
-package com.android.share.manager.authenticate
+package com.android.share.manager.receiver
 
 import android.content.Context
-import com.android.share.manager.authenticate.ReceiverManagerImpl.ReceiveState.*
+import com.android.share.manager.receiver.ReceiverManagerImpl.ReceiveState.*
 import com.android.share.manager.sender.SenderCallback
 import com.android.share.model.network.NetworkModel
 import com.android.share.util.readStringFromStream
@@ -14,10 +14,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.Inet4Address
-import java.net.NetworkInterface
-import java.net.ServerSocket
-import java.net.Socket
+import java.net.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -38,17 +35,11 @@ class ReceiverManagerImpl @Inject constructor(
 
     override suspend fun startAuthentication() = withContext(Dispatchers.IO) {
         val network = getDeviceAddress()
-
-        if (network == null) {
-            _receiveState.value = NoInternet
-            return@withContext
-        }
-
         _receiveState.value = ReceiveInitializing
         startServerSocket(network.address)
     }
 
-    private fun getDeviceAddress(): NetworkModel? {
+    private fun getDeviceAddress(): NetworkModel {
         return NetworkInterface.getNetworkInterfaces().asSequence().flatMap { interfaces ->
             interfaces.interfaceAddresses.asSequence().mapNotNull { addresses ->
                 val address = addresses.address
@@ -59,7 +50,7 @@ class ReceiverManagerImpl @Inject constructor(
                     displayName = interfaces.displayName
                 ) else null
             }
-        }.firstOrNull()
+        }.first()
     }
 
     private suspend fun startServerSocket(address: Inet4Address) = try {
@@ -67,6 +58,8 @@ class ReceiverManagerImpl @Inject constructor(
         val uniqueNumber = address.canonicalHostName.substringAfterLast(".")
         _receiveState.value = ReceiveStarted(uniqueNumber)
         while (!serverSocket.isClosed) receiveRequest()
+    } catch (exception: SocketException) {
+        exception.printStackTrace()
     } catch (exception: Exception) {
         exception.printStackTrace()
         _receiveState.value = Failed
@@ -141,7 +134,6 @@ class ReceiverManagerImpl @Inject constructor(
     sealed class ReceiveState {
         object Idle : ReceiveState()
         object Failed : ReceiveState()
-        object NoInternet : ReceiveState()
         object ReceiveInitializing : ReceiveState()
         data class ReceiveComplete(val name: String) : ReceiveState()
         data class ReceiveStarted(val uniqueNumber: String) : ReceiveState()

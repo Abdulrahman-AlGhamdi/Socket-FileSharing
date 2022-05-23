@@ -2,7 +2,7 @@ package com.android.share.ui.receiver
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.share.manager.authenticate.ReceiverManager
+import com.android.share.manager.receiver.ReceiverManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

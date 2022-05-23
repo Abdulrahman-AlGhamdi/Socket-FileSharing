@@ -78,9 +78,8 @@ fun Context.clearApplicationUserData() {
     activityManager.clearApplicationUserData()
 }
 
-fun InputStream.readStringFromStream(): String {
-    val stringSize = this.read()
-    if (stringSize == -1) return "-1"
+fun InputStream.readStringFromStream(metadataSize: Int = 0): String {
+    val stringSize = if (metadataSize == 0) this.read() else metadataSize
     val metadataByteArraySize = ByteArray(stringSize)
     val metadataBytesLength = this.read(metadataByteArraySize)
 

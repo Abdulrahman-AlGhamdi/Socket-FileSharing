@@ -9,8 +9,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.share.R
 import com.android.share.databinding.FragmentReceiverBinding
-import com.android.share.manager.authenticate.AuthenticateManagerImpl.AuthenticateState
+import com.android.share.manager.authenticate.ReceiverManagerImpl.ReceiveState
 import com.android.share.util.viewBinding
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,6 +22,8 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
 
     private val binding by viewBinding(FragmentReceiverBinding::bind)
     private val viewModel by viewModels<ReceiverViewModel>()
+    private var progressDialog: AlertDialog? = null
+    private lateinit var progress: LinearProgressIndicator
     private lateinit var alertDialog: AlertDialog
 
     private lateinit var authenticateJob: Job
@@ -41,28 +44,31 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
     private fun getAuthenticateResult() = lifecycleScope.launch(Dispatchers.Main) {
         viewModel.authenticateState.collect {
             when (it) {
-                AuthenticateState.ReceiveInitializing -> {
+                ReceiveState.ReceiveInitializing -> {
+                    dismissDialog()
                     binding.internet.visibility = View.GONE
                     binding.receiving.visibility = View.GONE
                     binding.progress.visibility = View.VISIBLE
                 }
-                is AuthenticateState.ReceiveStarted -> {
+                is ReceiveState.ReceiveStarted -> {
+                    dismissDialog()
                     binding.receiver.text = it.uniqueNumber
                     binding.progress.visibility = View.GONE
                     binding.internet.visibility = View.GONE
                     binding.receiving.visibility = View.VISIBLE
                 }
-                AuthenticateState.Failed -> {
-                    if (::alertDialog.isInitialized) alertDialog.dismiss()
+                ReceiveState.Failed -> {
+                    dismissDialog()
                     authenticateJob = viewModel.startAuthentication()
                 }
-                AuthenticateState.NoInternet -> {
+                ReceiveState.NoInternet -> {
+                    dismissDialog()
                     binding.progress.visibility = View.GONE
                     binding.receiving.visibility = View.GONE
                     binding.internet.visibility = View.VISIBLE
                 }
-                is AuthenticateState.Connect -> {
-                    if (::alertDialog.isInitialized) alertDialog.dismiss()
+                is ReceiveState.Connect -> {
+                    dismissDialog()
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("Request Connection")
                         this.setMessage("Sender number: ${it.uniqueNumber} would like to share a ${it.name} file")
@@ -71,9 +77,40 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                         this.setNegativeButton("Refuse") { _, _ -> viewModel.requestCallback(false) }
                     }.show()
                 }
-                AuthenticateState.Idle -> Unit
+                is ReceiveState.ReceiveProgress -> {
+                    if (progressDialog != null) {
+                        progress.setProgress(it.progress, true)
+                        return@collect
+                    }
+
+                    dismissDialog()
+                    val dialogView = layoutInflater.inflate(R.layout.receiver_progress_dialog, null)
+                    progress = dialogView.findViewById(R.id.progress)
+
+                    progressDialog = AlertDialog.Builder(requireContext()).apply {
+                        this.setView(dialogView)
+                        this.setCancelable(false)
+                        this.setTitle("Receiving ${it.name} file")
+                        this.setPositiveButton("OK", null)
+                    }.show()
+                }
+                is ReceiveState.ReceiveComplete -> {
+                    dismissDialog()
+                    alertDialog = AlertDialog.Builder(requireContext()).apply {
+                        this.setTitle("File Received")
+                        this.setMessage("${it.name} file has been received successfully")
+                        this.setPositiveButton("OK", null)
+                    }.show()
+                }
+                ReceiveState.Idle -> Unit
             }
         }
+    }
+
+    private fun dismissDialog() {
+        progressDialog?.dismiss()
+        progressDialog = null
+        if (::alertDialog.isInitialized) alertDialog.dismiss()
     }
 
     override fun onDestroyView() {

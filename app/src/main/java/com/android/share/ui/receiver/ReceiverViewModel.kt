@@ -2,7 +2,7 @@ package com.android.share.ui.receiver
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.share.manager.authenticate.AuthenticateManager
+import com.android.share.manager.authenticate.ReceiverManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,19 +10,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReceiverViewModel @Inject constructor(
-    private val authenticateManager: AuthenticateManager
+    private val receiverManager: ReceiverManager
 ) : ViewModel() {
 
-    val authenticateState = authenticateManager.authenticateState
+    val authenticateState = receiverManager.receiveState
 
     fun startAuthentication() = viewModelScope.launch {
-        authenticateManager.startAuthentication()
+        receiverManager.startAuthentication()
     }
 
     fun requestCallback(respond: Boolean) = viewModelScope.launch(Dispatchers.IO) {
-        if (respond) authenticateManager.requestCallback?.accept()
-        else authenticateManager.requestCallback?.refuse()
+        if (respond) receiverManager.senderCallback?.accept()
+        else receiverManager.senderCallback?.refuse()
     }
 
-    fun closeServerSocket() = authenticateManager.closeServerSocket()
+    fun closeServerSocket() = receiverManager.closeServerSocket()
 }

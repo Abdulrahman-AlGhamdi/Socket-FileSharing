@@ -13,10 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.share.R
 import com.android.share.databinding.FragmentSenderBinding
-import com.android.share.manager.request.RequestManagerImpl.RequestState
+import com.android.share.manager.sender.SenderManagerImpl.SendState
 import com.android.share.manager.scan.ScanManagerImpl.ScanState
 import com.android.share.util.showSnackBar
 import com.android.share.util.viewBinding
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,9 +29,12 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
 
     private val binding by viewBinding(FragmentSenderBinding::bind)
     private val viewModel by viewModels<SenderViewModel>()
-    private lateinit var senderAdapter: SenderAdapter
-    private lateinit var alertDialog: AlertDialog
+    private var progressDialog: AlertDialog? = null
     private var fileUri = Uri.EMPTY
+
+    private lateinit var senderAdapter: SenderAdapter
+    private lateinit var progress: LinearProgressIndicator
+    private lateinit var alertDialog: AlertDialog
 
     private lateinit var scanJob: Job
     private lateinit var scanResultJob: Job
@@ -105,16 +109,16 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
     private fun getRequestResult() = lifecycleScope.launch(Dispatchers.Main) {
         viewModel.requestState.collect {
             when (it) {
-                RequestState.RequestStarted -> {
-                    if (::alertDialog.isInitialized) alertDialog.dismiss()
+                SendState.SendStarted -> {
+                    dismissDialog()
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("Request Connection")
                         this.setMessage("Request connection has been sent the receiver and waiting for the approval")
                         this.setCancelable(false)
                     }.show()
                 }
-                RequestState.RequestFailed -> {
-                    if (::alertDialog.isInitialized) alertDialog.dismiss()
+                SendState.SendFailed -> {
+                    dismissDialog()
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("Request Connection")
                         this.setMessage("The receiver requested is no longer available")
@@ -123,8 +127,8 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
                         }
                     }.show()
                 }
-                RequestState.RequestAccepted -> {
-                    if (::alertDialog.isInitialized) alertDialog.dismiss()
+                SendState.SendAccepted -> {
+                    dismissDialog()
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("Request Connection")
                         this.setMessage("The receiver has accepted your connection request")
@@ -132,15 +136,40 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
                         this.setPositiveButton("OK", null)
                     }.show()
                 }
-                RequestState.RequestRefused -> {
-                    if (::alertDialog.isInitialized) alertDialog.dismiss()
+                SendState.SendRefused -> {
+                    dismissDialog()
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("Request Connection")
                         this.setMessage("The receiver has refused your connection request")
                         this.setNegativeButton("Cancel", null)
                     }.show()
                 }
-                RequestState.Idle -> Unit
+                is SendState.SendProgress -> {
+                    if (progressDialog != null) {
+                        progress.setProgress(it.progress, true)
+                        return@collect
+                    }
+
+                    dismissDialog()
+                    val dialogView = layoutInflater.inflate(R.layout.receiver_progress_dialog, null)
+                    progress = dialogView.findViewById(R.id.progress)
+
+                    progressDialog = AlertDialog.Builder(requireContext()).apply {
+                        this.setView(dialogView)
+                        this.setCancelable(false)
+                        this.setTitle("Sending ${it.name} file")
+                        this.setPositiveButton("OK", null)
+                    }.show()
+                }
+                is SendState.SendComplete -> {
+                    dismissDialog()
+                    alertDialog = AlertDialog.Builder(requireContext()).apply {
+                        this.setTitle("File Sent")
+                        this.setMessage("${it.name} file has been sent successfully")
+                        this.setPositiveButton("OK", null)
+                    }.show()
+                }
+                SendState.Idle -> Unit
             }
         }
     }
@@ -162,10 +191,16 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
             this.setMessage("Are you sure you want to send $name file to receiver number: $uniqueNumber?")
             this.setCancelable(false)
             this.setPositiveButton("Yes") { _, _ ->
-                requestJob = viewModel.requestConnection(receiver, documentFile)
+                requestJob = viewModel.sendRequest(receiver, documentFile)
             }
             this.setNegativeButton("Cancel", null)
         }.show()
+    }
+
+    private fun dismissDialog() {
+        progressDialog?.dismiss()
+        progressDialog = null
+        if (::alertDialog.isInitialized) alertDialog.dismiss()
     }
 
     override fun onResume() {

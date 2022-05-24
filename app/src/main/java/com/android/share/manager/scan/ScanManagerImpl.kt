@@ -38,7 +38,7 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
             async {
                 ipAddresses.mapNotNull { ipAddress ->
                     _scanState.value = Progress(uniqueNumber, networkSize, counter++)
-                    val isReachable = ipAddress.isReachable(500)
+                    val isReachable = ipAddress.isReachable(250)
                     if (isReachable && isTcpPortOpen(ipAddress)) ipAddress.canonicalHostName else null
                 }
             }
@@ -90,7 +90,7 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
         val socket = Socket()
 
         return try {
-            socket.connect(InetSocketAddress(ipAddress, 52525), 500)
+            socket.connect(InetSocketAddress(ipAddress, 52525), 250)
             socket.getOutputStream().use { it.writeStringAsStream("scan") }
             true
         } catch (ex: Exception) {

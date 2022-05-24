@@ -13,8 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.share.R
 import com.android.share.databinding.FragmentSenderBinding
-import com.android.share.manager.sender.SenderManagerImpl.SendState
 import com.android.share.manager.scan.ScanManagerImpl.ScanState
+import com.android.share.manager.sender.SenderManagerImpl.SendState
+import com.android.share.util.NetworkConnectivity
 import com.android.share.util.showSnackBar
 import com.android.share.util.viewBinding
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -45,7 +46,6 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        scanJob = viewModel.startScanning()
         scanResultJob = getScanResult()
         requestResultJob = getRequestResult()
     }
@@ -65,6 +65,18 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
             if (::scanJob.isInitialized) scanJob.cancel()
             scanJob = viewModel.startScanning()
             true
+        }
+
+        NetworkConnectivity(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
+            if (hasInternet) {
+                if (::scanJob.isInitialized) scanJob.cancel()
+                scanJob = viewModel.startScanning()
+            } else {
+                binding.empty.visibility = View.GONE
+                binding.result.visibility = View.GONE
+                binding.scanning.visibility = View.GONE
+                binding.internet.visibility = View.VISIBLE
+            }
         }
     }
 

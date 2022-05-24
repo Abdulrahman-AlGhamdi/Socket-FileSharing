@@ -15,8 +15,8 @@ class ReceiverViewModel @Inject constructor(
 
     val authenticateState = receiverManager.receiveState
 
-    fun startAuthentication() = viewModelScope.launch {
-        receiverManager.startAuthentication()
+    fun startReceiving() = viewModelScope.launch {
+        receiverManager.startReceiving()
     }
 
     fun requestCallback(respond: Boolean) = viewModelScope.launch(Dispatchers.IO) {

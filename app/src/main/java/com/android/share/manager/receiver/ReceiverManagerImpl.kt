@@ -33,7 +33,7 @@ class ReceiverManagerImpl @Inject constructor(
     private lateinit var clientInputStream: InputStream
     private lateinit var clientOutputStream: OutputStream
 
-    override suspend fun startAuthentication() = withContext(Dispatchers.IO) {
+    override suspend fun startReceiving() = withContext(Dispatchers.IO) {
         val network = getDeviceAddress()
         _receiveState.value = ReceiveInitializing
         startServerSocket(network.address)

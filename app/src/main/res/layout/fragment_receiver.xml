@@ -15,44 +15,62 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/icon_back_arrow"
-        app:title="@string/fragment_receive"
+        app:title="@string/receive_fragment"
         app:titleCentered="true" />
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        app:indicatorColor="@color/pink"
+        android:visibility="gone"
+        app:indicatorColor="@color/green"
+        app:indicatorSize="115dp"
+        app:layout_constraintBottom_toBottomOf="@+id/receive"
+        app:layout_constraintEnd_toEndOf="@+id/receive"
+        app:layout_constraintStart_toStartOf="@+id/receive"
+        app:layout_constraintTop_toTopOf="@+id/receive" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/receive"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/receive_button_start"
+        android:textStyle="bold"
+        app:backgroundTint="@color/red"
+        app:cornerRadius="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="@string/receiver_ready_message"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0.0"
         app:lottie_autoPlay="true"
         app:lottie_fileName="lottie/wave_animation.json"
         app:lottie_loop="true" />
-
-    <TextView
-        android:id="@+id/receiver"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:drawableTopCompat="@drawable/icon_receive"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <ImageView
         android:id="@+id/internet_icon"
@@ -75,13 +93,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/initializing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="progress" />
-
     <TextView
         android:id="@+id/internet_message"
         android:layout_width="wrap_content"
@@ -97,7 +108,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="animation, receiver" />
+        app:constraint_referenced_ids="animation, message" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/internet"

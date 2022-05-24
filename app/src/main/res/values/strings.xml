@@ -3,18 +3,19 @@
     <string name="app_name">File Sharing</string>
 
     <!-- Send Fragment Strings -->
-    <string name="fragment_send">Send File</string>
+    <string name="send_fragment">Send Files</string>
     <string name="send_no_receivers_header">No Receivers Found</string>
     <string name="send_no_receivers_message">Please make sure both the receiver and sender\nin the same network</string>
     <string name="sender_no_internet_message">Please enable the internet to start scanning for receivers</string>
     <string name="sender_rescan">Rescan</string>
 
     <!-- Receive Fragment Strings -->
-    <string name="fragment_receive">Receive File</string>
+    <string name="receive_fragment">Receive Files</string>
+    <string name="receive_button_start">Start</string>
+    <string name="receive_button_stop">Stop</string>
     <string name="receiver_no_internet_message">Please enable the internet in order to be available\nto the sender and receive files</string>
+    <string name="receiver_ready_message">Your device is ready to receive files\nyou will be available to the senders to send you files</string>
 
     <!-- Common Strings -->
     <string name="no_internet_header">No Internet Connection</string>
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

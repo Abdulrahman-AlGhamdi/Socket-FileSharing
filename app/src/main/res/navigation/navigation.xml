@@ -3,19 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/receiverFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.android.share.ui.home.HomeFragment"
-        android:label="NDS File Sharing"
-        tools:layout="@layout/fragment_home">
+        android:id="@+id/senderFragment"
+        android:name="com.android.share.ui.sender.SenderFragment"
+        android:label="Sender"
+        tools:layout="@layout/fragment_sender">
         <action
-            android:id="@+id/action_homeFragment_to_receiverFragment"
+            android:id="@+id/action_senderFragment_to_receiverFragment"
             app:destination="@id/receiverFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_senderFragment"
-            app:destination="@id/senderFragment" />
     </fragment>
 
     <fragment
@@ -23,11 +20,5 @@
         android:name="com.android.share.ui.receiver.ReceiverFragment"
         android:label="Receiver"
         tools:layout="@layout/fragment_receiver" />
-
-    <fragment
-        android:id="@+id/senderFragment"
-        android:name="com.android.share.ui.sender.SenderFragment"
-        android:label="Sender"
-        tools:layout="@layout/fragment_sender" />
 
 </navigation>

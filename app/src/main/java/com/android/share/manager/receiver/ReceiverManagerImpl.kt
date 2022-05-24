@@ -4,6 +4,7 @@ import android.content.Context
 import com.android.share.manager.receiver.ReceiverManagerImpl.ReceiveState.*
 import com.android.share.manager.sender.SenderCallback
 import com.android.share.model.network.NetworkModel
+import com.android.share.util.Constants
 import com.android.share.util.readStringFromStream
 import com.android.share.util.writeStringAsStream
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -70,23 +71,23 @@ class ReceiverManagerImpl @Inject constructor(
 
         clientSocket.getInputStream().use { socketInput ->
             val request = socketInput.readStringFromStream()
-            if (request == "scan") return
+            if (request == Constants.SOCKET_SCAN) return
 
             clientSocket.getOutputStream().use { socketOutput ->
                 val (connect, name) = request.split(":")
                 val sender = clientSocket.inetAddress.hostName.substringAfterLast(".")
-                if (connect == "share") _receiveState.value = Connect(sender, name)
+                if (connect == Constants.SOCKET_SHARE) _receiveState.value = Connect(sender, name)
 
                 suspendCoroutine<Boolean> { continuation ->
                     senderCallback = object : SenderCallback {
                         override fun accept() {
-                            socketOutput.writeStringAsStream("accept")
+                            socketOutput.writeStringAsStream(Constants.SOCKET_ACCEPT)
                             receiveFile(socketInput)
                             continuation.resume(true)
                         }
 
                         override fun refuse() {
-                            socketOutput.writeStringAsStream("refuse")
+                            socketOutput.writeStringAsStream(Constants.SOCKET_REFUSE)
                             _receiveState.value = Idle
                             continuation.resume(true)
                         }

@@ -2,6 +2,7 @@ package com.android.share.manager.scan
 
 import com.android.share.manager.scan.ScanManagerImpl.ScanState.*
 import com.android.share.model.network.NetworkModel
+import com.android.share.util.Constants
 import com.android.share.util.writeStringAsStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -91,7 +92,7 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
 
         return try {
             socket.connect(InetSocketAddress(ipAddress, 52525), 250)
-            socket.getOutputStream().use { it.writeStringAsStream("scan") }
+            socket.getOutputStream().use { it.writeStringAsStream(Constants.SOCKET_SCAN) }
             true
         } catch (ex: Exception) {
             false

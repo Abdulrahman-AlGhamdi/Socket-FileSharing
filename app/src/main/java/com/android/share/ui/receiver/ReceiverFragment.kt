@@ -1,9 +1,6 @@
 package com.android.share.ui.receiver
 
 import android.app.AlertDialog
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.Network
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -13,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.android.share.R
 import com.android.share.databinding.FragmentReceiverBinding
 import com.android.share.manager.receiver.ReceiverManagerImpl.ReceiveState
+import com.android.share.util.NetworkConnectivity
 import com.android.share.util.viewBinding
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,13 +24,12 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
     private val binding by viewBinding(FragmentReceiverBinding::bind)
     private val viewModel by viewModels<ReceiverViewModel>()
 
-    private lateinit var cm: ConnectivityManager
     private var progressDialog: AlertDialog? = null
     private lateinit var progress: LinearProgressIndicator
     private lateinit var alertDialog: AlertDialog
 
-    private lateinit var authenticateJob: Job
-    private lateinit var authenticateResultJob: Job
+    private lateinit var receiveJob: Job
+    private lateinit var receiveStateJob: Job
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,22 +38,18 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
     }
 
     private fun init() {
-        cm = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        cm.registerDefaultNetworkCallback(networkCallback)
         binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
-    }
 
-    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network) {
-            lifecycleScope.launch(Dispatchers.Main) {
+        NetworkConnectivity(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
+            if (hasInternet) {
+                if (::receiveJob.isInitialized) receiveJob.cancel()
+
                 dismissDialog()
-                authenticateJob = viewModel.startAuthentication()
-                authenticateResultJob = getAuthenticateResult()
-            }
-        }
+                receiveJob = viewModel.startReceiving()
+                receiveStateJob = getReceiveState()
+            } else {
+                if (::receiveJob.isInitialized) receiveJob.cancel()
 
-        override fun onLost(network: Network) {
-            lifecycleScope.launch(Dispatchers.Main) {
                 dismissDialog()
                 viewModel.closeServerSocket()
                 binding.progress.visibility = View.GONE
@@ -66,7 +59,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
         }
     }
 
-    private fun getAuthenticateResult() = lifecycleScope.launch(Dispatchers.Main) {
+    private fun getReceiveState() = lifecycleScope.launch(Dispatchers.Main) {
         viewModel.authenticateState.collect {
             when (it) {
                 ReceiveState.ReceiveInitializing -> {
@@ -83,8 +76,10 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                     binding.receiving.visibility = View.VISIBLE
                 }
                 ReceiveState.Failed -> {
+                    if (::receiveJob.isInitialized) receiveJob.cancel()
+
                     dismissDialog()
-                    authenticateJob = viewModel.startAuthentication()
+                    receiveJob = viewModel.startReceiving()
                 }
                 is ReceiveState.Connect -> {
                     dismissDialog()
@@ -132,10 +127,9 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
     }
 
     override fun onDestroyView() {
-        if (::authenticateJob.isInitialized) authenticateJob.cancel()
-        if (::authenticateResultJob.isInitialized) authenticateResultJob.cancel()
+        if (::receiveJob.isInitialized) receiveJob.cancel()
+        if (::receiveStateJob.isInitialized) receiveStateJob.cancel()
         viewModel.closeServerSocket()
-        cm.unregisterNetworkCallback(networkCallback)
         super.onDestroyView()
     }
 }

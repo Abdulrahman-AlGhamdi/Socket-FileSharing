@@ -9,7 +9,7 @@ interface ReceiverManager {
 
     val receiveState: StateFlow<ReceiverManagerImpl.ReceiveState>
 
-    suspend fun startAuthentication()
+    suspend fun startReceiving()
 
     fun closeServerSocket()
 }

@@ -24,6 +24,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
     private val binding by viewBinding(FragmentReceiverBinding::bind)
     private val viewModel by viewModels<ReceiverViewModel>()
 
+    private var isActive = false
     private var progressDialog: AlertDialog? = null
     private lateinit var progress: LinearProgressIndicator
     private lateinit var alertDialog: AlertDialog
@@ -40,18 +41,28 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
     private fun init() {
         binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
 
+        binding.receive.setOnClickListener {
+            isActive = !isActive
+            updateButtonStyle()
+        }
+
         NetworkConnectivity(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
             if (hasInternet) {
-                if (::receiveJob.isInitialized) receiveJob.cancel()
-
-                dismissDialog()
-                receiveJob = viewModel.startReceiving()
-                receiveStateJob = getReceiveState()
+                binding.receive.isEnabled = true
+                binding.progress.visibility = View.GONE
+                binding.internet.visibility = View.GONE
+                binding.receiving.visibility = View.GONE
+                binding.receive.visibility = View.VISIBLE
             } else {
                 if (::receiveJob.isInitialized) receiveJob.cancel()
 
+                isActive = false
                 dismissDialog()
+                updateButtonStyle()
                 viewModel.closeServerSocket()
+
+                binding.receive.isEnabled = true
+                binding.receive.visibility = View.GONE
                 binding.progress.visibility = View.GONE
                 binding.receiving.visibility = View.GONE
                 binding.internet.visibility = View.VISIBLE
@@ -64,22 +75,32 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
             when (it) {
                 ReceiveState.ReceiveInitializing -> {
                     dismissDialog()
-                    binding.internet.visibility = View.GONE
+                    binding.receive.isEnabled = false
                     binding.receiving.visibility = View.GONE
+                    binding.internet.visibility = View.GONE
+                    binding.receive.visibility = View.VISIBLE
                     binding.progress.visibility = View.VISIBLE
                 }
                 is ReceiveState.ReceiveStarted -> {
                     dismissDialog()
-                    binding.receiver.text = it.uniqueNumber
+//                    binding.receiver.text = it.uniqueNumber
+                    binding.receive.isEnabled = true
                     binding.progress.visibility = View.GONE
                     binding.internet.visibility = View.GONE
+                    binding.receive.visibility = View.VISIBLE
                     binding.receiving.visibility = View.VISIBLE
                 }
                 ReceiveState.Failed -> {
                     if (::receiveJob.isInitialized) receiveJob.cancel()
-
+                    isActive = false
+                    updateButtonStyle()
                     dismissDialog()
-                    receiveJob = viewModel.startReceiving()
+
+                    binding.receive.isEnabled = true
+                    binding.progress.visibility = View.GONE
+                    binding.internet.visibility = View.GONE
+                    binding.receiving.visibility = View.GONE
+                    binding.receive.visibility = View.VISIBLE
                 }
                 is ReceiveState.Connect -> {
                     dismissDialog()
@@ -118,6 +139,26 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
                 ReceiveState.Idle -> Unit
             }
         }
+    }
+
+    private fun updateButtonStyle(): Unit = if (isActive) {
+        binding.receive.setBackgroundColor(resources.getColor(R.color.green, null))
+        binding.receive.setText(R.string.receive_button_stop)
+
+        if (::receiveJob.isInitialized) receiveJob.cancel()
+        dismissDialog()
+        receiveJob = viewModel.startReceiving()
+        receiveStateJob = getReceiveState()
+    } else {
+        viewModel.closeServerSocket()
+        binding.receive.setBackgroundColor(resources.getColor(R.color.red, null))
+        binding.receive.setText(R.string.receive_button_start)
+
+        binding.receive.isEnabled = true
+        binding.receiving.visibility = View.GONE
+        binding.internet.visibility = View.GONE
+        binding.progress.visibility = View.GONE
+        binding.receive.visibility = View.VISIBLE
     }
 
     private fun dismissDialog() {

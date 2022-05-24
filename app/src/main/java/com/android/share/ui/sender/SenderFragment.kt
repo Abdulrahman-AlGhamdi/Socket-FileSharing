@@ -16,6 +16,7 @@ import com.android.share.databinding.FragmentSenderBinding
 import com.android.share.manager.scan.ScanManagerImpl.ScanState
 import com.android.share.manager.sender.SenderManagerImpl.SendState
 import com.android.share.util.NetworkConnectivity
+import com.android.share.util.navigateTo
 import com.android.share.util.showSnackBar
 import com.android.share.util.viewBinding
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -30,6 +31,7 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
 
     private val binding by viewBinding(FragmentSenderBinding::bind)
     private val viewModel by viewModels<SenderViewModel>()
+    private val directions = SenderFragmentDirections
     private var progressDialog: AlertDialog? = null
     private var fileUri = Uri.EMPTY
 
@@ -58,7 +60,10 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
         })
 
         binding.recycler.adapter = senderAdapter
-        binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+        binding.toolbar.setNavigationOnClickListener {
+            val action = directions.actionSenderFragmentToReceiverFragment()
+            findNavController().navigateTo(action, R.id.senderFragment)
+        }
 
         binding.toolbar.setOnMenuItemClickListener {
             if (it.itemId != R.id.rescan) return@setOnMenuItemClickListener false

@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/sender_menu"
         app:navigationIcon="@drawable/icon_back_arrow"
-        app:title="@string/fragment_send"
+        app:title="@string/send_fragment"
         app:titleCentered="true" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator

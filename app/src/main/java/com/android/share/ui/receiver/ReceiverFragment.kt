@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.android.share.R
 import com.android.share.databinding.FragmentReceiverBinding
 import com.android.share.manager.receiver.ReceiverManagerImpl.ReceiveState
-import com.android.share.util.NetworkConnectivity
+import com.android.share.manager.connectivity.ConnectivityManager
 import com.android.share.util.viewBinding
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +46,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
             updateButtonStyle()
         }
 
-        NetworkConnectivity(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
+        ConnectivityManager(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
             if (hasInternet) {
                 binding.receive.isEnabled = true
                 binding.progress.visibility = View.GONE
@@ -142,7 +142,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
     }
 
     private fun updateButtonStyle(): Unit = if (isActive) {
-        binding.receive.setBackgroundColor(resources.getColor(R.color.green, null))
+        binding.receive.setBackgroundColor(resources.getColor(R.color.red, null))
         binding.receive.setText(R.string.receive_button_stop)
 
         if (::receiveJob.isInitialized) receiveJob.cancel()
@@ -151,7 +151,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
         receiveStateJob = getReceiveState()
     } else {
         viewModel.closeServerSocket()
-        binding.receive.setBackgroundColor(resources.getColor(R.color.red, null))
+        binding.receive.setBackgroundColor(resources.getColor(R.color.green, null))
         binding.receive.setText(R.string.receive_button_start)
 
         binding.receive.isEnabled = true

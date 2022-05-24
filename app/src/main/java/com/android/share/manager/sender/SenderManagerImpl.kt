@@ -3,6 +3,7 @@ package com.android.share.manager.sender
 import android.content.Context
 import androidx.documentfile.provider.DocumentFile
 import com.android.share.manager.sender.SenderManagerImpl.SendState.*
+import com.android.share.util.Constants
 import com.android.share.util.readStringFromStream
 import com.android.share.util.writeStringAsStream
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,12 +36,12 @@ class SenderManagerImpl @Inject constructor(
 
             clientSocket.getOutputStream().use { socketOutput ->
                 val name = documentFile.name ?: UUID.randomUUID().toString()
-                socketOutput.writeStringAsStream("share:$name")
+                socketOutput.writeStringAsStream("${Constants.SOCKET_SHARE}:$name")
 
                 clientSocket.getInputStream().use { socketInput ->
                     val respond = socketInput.readStringFromStream()
-                    if (respond == "accept") sendFile(documentFile, socketOutput)
-                    if (respond == "refuse") _sendState.value = SendRefused
+                    if (respond == Constants.SOCKET_ACCEPT) sendFile(documentFile, socketOutput)
+                    if (respond == Constants.SOCKET_REFUSE) _sendState.value = SendRefused
                 }
             }
         } catch (exception: Exception) {

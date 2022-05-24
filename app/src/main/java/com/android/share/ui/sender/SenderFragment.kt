@@ -15,7 +15,7 @@ import com.android.share.R
 import com.android.share.databinding.FragmentSenderBinding
 import com.android.share.manager.scan.ScanManagerImpl.ScanState
 import com.android.share.manager.sender.SenderManagerImpl.SendState
-import com.android.share.util.NetworkConnectivity
+import com.android.share.manager.connectivity.ConnectivityManager
 import com.android.share.util.navigateTo
 import com.android.share.util.showSnackBar
 import com.android.share.util.viewBinding
@@ -72,7 +72,7 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
             true
         }
 
-        NetworkConnectivity(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
+        ConnectivityManager(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
             if (hasInternet) {
                 if (::scanJob.isInitialized) scanJob.cancel()
                 scanJob = viewModel.startScanning()
@@ -179,6 +179,8 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
                 }
                 is SendState.SendComplete -> {
                     dismissDialog()
+                    fileUri = Uri.EMPTY
+
                     alertDialog = AlertDialog.Builder(requireContext()).apply {
                         this.setTitle("File Sent")
                         this.setMessage("${it.name} file has been sent successfully")

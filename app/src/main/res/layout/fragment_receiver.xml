@@ -39,7 +39,7 @@
         android:insetBottom="0dp"
         android:text="@string/receive_button_start"
         android:textStyle="bold"
-        app:backgroundTint="@color/red"
+        app:backgroundTint="@color/green"
         app:cornerRadius="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

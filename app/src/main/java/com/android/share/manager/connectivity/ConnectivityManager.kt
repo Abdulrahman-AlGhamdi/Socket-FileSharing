@@ -1,11 +1,11 @@
-package com.android.share.util
+package com.android.share.manager.connectivity
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import androidx.lifecycle.LiveData
 
-class NetworkConnectivity(context: Context) : LiveData<Boolean>() {
+class ConnectivityManager(context: Context) : LiveData<Boolean>() {
 
     private val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

@@ -3,9 +3,9 @@ package com.android.share.manager.sender
 import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.flow.StateFlow
 
-interface SenderManager {
+interface RequestManager {
 
-    val sendState: StateFlow<SenderManagerImpl.SendState>
+    val requestState: StateFlow<RequestManagerImpl.RequestState>
 
     suspend fun sendRequest(receiver: String, documentFile: DocumentFile)
 

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_senderFragment_to_receiverFragment"
             app:destination="@id/receiverFragment" />
+        <action
+            android:id="@+id/action_senderFragment_to_requestFragment"
+            app:destination="@id/requestFragment" />
     </fragment>
 
     <fragment
@@ -20,5 +23,18 @@
         android:name="com.android.share.ui.receiver.ReceiverFragment"
         android:label="Receiver"
         tools:layout="@layout/fragment_receiver" />
+
+    <dialog
+        android:id="@+id/requestFragment"
+        android:name="com.android.share.ui.request.RequestFragment"
+        android:label="fragment_request"
+        tools:layout="@layout/fragment_request">
+        <argument
+            android:name="receiver"
+            app:argType="string" />
+        <argument
+            android:name="fileUri"
+            app:argType="android.net.Uri" />
+    </dialog>
 
 </navigation>

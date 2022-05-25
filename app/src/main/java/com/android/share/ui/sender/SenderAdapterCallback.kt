@@ -1,5 +1,5 @@
 package com.android.share.ui.sender
 
-interface SenderAdapterListeners {
+interface SenderAdapterCallback {
     fun onReceiverClick(receiver: String)
 }

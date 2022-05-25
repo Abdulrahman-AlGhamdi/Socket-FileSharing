@@ -2,7 +2,7 @@ package com.android.share.manager.sender
 
 import android.content.Context
 import androidx.documentfile.provider.DocumentFile
-import com.android.share.manager.sender.SenderManagerImpl.SendState.*
+import com.android.share.manager.sender.RequestManagerImpl.RequestState.*
 import com.android.share.util.Constants
 import com.android.share.util.readStringFromStream
 import com.android.share.util.writeStringAsStream
@@ -17,12 +17,12 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-class SenderManagerImpl @Inject constructor(
+class RequestManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) : SenderManager {
+) : RequestManager {
 
-    private val _sendState: MutableStateFlow<SendState> = MutableStateFlow(Idle)
-    override val sendState = _sendState.asStateFlow()
+    private val _requestState: MutableStateFlow<RequestState> = MutableStateFlow(RequestIdle)
+    override val requestState = _requestState.asStateFlow()
 
     private lateinit var clientSocket: Socket
 
@@ -31,7 +31,7 @@ class SenderManagerImpl @Inject constructor(
         documentFile: DocumentFile
     ) = withContext(Dispatchers.IO) {
         try {
-            _sendState.value = SendStarted
+            _requestState.value = RequestStarted
             clientSocket = Socket(receiver, 52525)
 
             clientSocket.getOutputStream().use { socketOutput ->
@@ -41,14 +41,14 @@ class SenderManagerImpl @Inject constructor(
                 clientSocket.getInputStream().use { socketInput ->
                     val respond = socketInput.readStringFromStream()
                     if (respond == Constants.SOCKET_ACCEPT) sendFile(documentFile, socketOutput)
-                    if (respond == Constants.SOCKET_REFUSE) _sendState.value = SendRefused
+                    if (respond == Constants.SOCKET_REFUSE) _requestState.value = RequestRefused
                 }
             }
         } catch (exception: Exception) {
             exception.printStackTrace()
-            _sendState.value = SendFailed
+            _requestState.value = RequestFailed
         } finally {
-            clientSocket.close()
+            closeClientSocket()
         }
     }
 
@@ -70,24 +70,23 @@ class SenderManagerImpl @Inject constructor(
                 } != -1) {
                 socketOutput.write(bufferSize, 0, bytesRead)
                 val progress = ((uploadProgress.toDouble() / fileSize) * 100).roundToInt()
-                _sendState.value = SendProgress(fileName, progress)
+                _requestState.value = RequestProgress(fileName, progress)
             }
         }
 
-        _sendState.value = SendComplete(fileName)
+        _requestState.value = RequestComplete(fileName)
     }
 
     override fun closeClientSocket() {
         if (::clientSocket.isInitialized) clientSocket.close()
     }
 
-    sealed class SendState {
-        object Idle : SendState()
-        object SendFailed : SendState()
-        object SendStarted : SendState()
-        object SendRefused : SendState()
-        object SendAccepted : SendState()
-        data class SendComplete(val name: String) : SendState()
-        data class SendProgress(val name: String, val progress: Int) : SendState()
+    sealed class RequestState {
+        object RequestIdle : RequestState()
+        object RequestFailed : RequestState()
+        object RequestStarted : RequestState()
+        object RequestRefused : RequestState()
+        data class RequestComplete(val name: String) : RequestState()
+        data class RequestProgress(val name: String, val progress: Int) : RequestState()
     }
 }

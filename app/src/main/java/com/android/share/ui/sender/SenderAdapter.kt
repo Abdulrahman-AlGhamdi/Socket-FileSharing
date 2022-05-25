@@ -8,7 +8,7 @@ import com.android.share.databinding.SenderUserItemBinding
 import java.util.*
 
 class SenderAdapter(
-    private val senderAdapterListeners: SenderAdapterListeners
+    private val senderAdapterCallback: SenderAdapterCallback
 ) : RecyclerView.Adapter<SenderAdapter.SenderViewHolder>() {
 
     private val receiversList = mutableListOf<String>()
@@ -30,7 +30,7 @@ class SenderAdapter(
 
             binding.name.text = uniqueNumber
             binding.background.setBackgroundColor(color)
-            binding.root.setOnClickListener { senderAdapterListeners.onReceiverClick(receiver) }
+            binding.root.setOnClickListener { senderAdapterCallback.onReceiverClick(receiver) }
         }
     }
 

@@ -16,6 +16,18 @@
     <string name="receiver_no_internet_message">Please enable the internet in order to be available\nto the sender and receive files</string>
     <string name="receiver_ready_message">Your device is ready to receive files\nyou will be available to the senders to send you files</string>
 
+    <!-- Request Fragment Strings -->
+    <string name="request_title">Request Sending File</string>
+    <string name="request_started">Request connection has been sent the receiver and waiting for the approval</string>
+    <string name="request_failed">The receiver requested is no longer available</string>
+    <string name="request_refused">The receiver has refused your connection request</string>
+    <string name="request_idle">"Are you sure you want to send %s1 file to receiver number: %s2?"</string>
+    <string name="request_progress">Sending %s file</string>
+    <string name="request_completed">%s file has been sent successfully</string>
+    <string name="request_positive_yes">Yes</string>
+    <string name="request_negative_cancel">Cancel</string>
+    <string name="request_positive_ok">OK</string>
+
     <!-- Common Strings -->
     <string name="no_internet_header">No Internet Connection</string>
 </resources>

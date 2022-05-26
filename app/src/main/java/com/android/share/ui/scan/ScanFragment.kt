@@ -1,4 +1,4 @@
-package com.android.share.ui.sender
+package com.android.share.ui.scan
 
 import android.content.Intent
 import android.net.Uri
@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.share.R
-import com.android.share.databinding.FragmentSenderBinding
+import com.android.share.databinding.FragmentScanBinding
 import com.android.share.manager.connectivity.ConnectivityManager
 import com.android.share.manager.scan.ScanManagerImpl.ScanState
 import com.android.share.util.navigateTo
@@ -23,14 +23,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SenderFragment : Fragment(R.layout.fragment_sender) {
+class ScanFragment : Fragment(R.layout.fragment_scan) {
 
-    private val binding by viewBinding(FragmentSenderBinding::bind)
-    private val viewModel by viewModels<SenderViewModel>()
+    private val binding by viewBinding(FragmentScanBinding::bind)
+    private val viewModel by viewModels<ScanViewModel>()
 
     private var fileUri = Uri.EMPTY
-    private val directions = SenderFragmentDirections
-    private lateinit var senderAdapter: SenderAdapter
+    private val directions = ScanFragmentDirections
+    private lateinit var scanAdapter: ScanAdapter
 
     private lateinit var scanJob: Job
     private lateinit var scanResultJob: Job
@@ -43,19 +43,19 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
     }
 
     private fun init() {
-        senderAdapter = SenderAdapter(object : SenderAdapterCallback {
+        scanAdapter = ScanAdapter(object : ScanAdapterCallback {
             override fun onReceiverClick(receiver: String) {
                 if (fileUri != Uri.EMPTY && getFileFromUri(fileUri) != null) {
-                    val action = directions.actionSenderFragmentToRequestFragment(receiver, fileUri)
-                    findNavController().navigateTo(action, R.id.senderFragment)
+                    val action = directions.actionScanFragmentToSendFragment(receiver, fileUri)
+                    findNavController().navigateTo(action, R.id.scanFragment)
                 } else requireView().showSnackBar("Please choose file in order to share it")
             }
         })
 
-        binding.recycler.adapter = senderAdapter
+        binding.recycler.adapter = scanAdapter
         binding.toolbar.setNavigationOnClickListener {
-            val action = directions.actionSenderFragmentToReceiverFragment()
-            findNavController().navigateTo(action, R.id.senderFragment)
+            val action = directions.actionScanFragmentToReceiveFragment()
+            findNavController().navigateTo(action, R.id.scanFragment)
         }
 
         binding.toolbar.setOnMenuItemClickListener {
@@ -104,7 +104,7 @@ class SenderFragment : Fragment(R.layout.fragment_sender) {
                     binding.scanning.visibility = View.VISIBLE
                 }
                 is ScanState.Complete -> {
-                    senderAdapter.setReceiversList(state.receivers)
+                    scanAdapter.setReceiversList(state.receivers)
 
                     binding.empty.visibility = View.GONE
                     binding.internet.visibility = View.GONE

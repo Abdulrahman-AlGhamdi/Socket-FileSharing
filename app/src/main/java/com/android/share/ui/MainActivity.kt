@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private fun navigateToSenderFragment(fileIntent: Intent) {
         if (fileIntent.action != Intent.ACTION_SEND) return
         val currentFragmentId = navController.currentDestination?.id
-        if (currentFragmentId != R.id.senderFragment) navController.navigate(R.id.senderFragment)
+        if (currentFragmentId != R.id.scanFragment) navController.navigate(R.id.scanFragment)
         this.intent = fileIntent
     }
 

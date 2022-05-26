@@ -3,32 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/receiverFragment">
+    app:startDestination="@id/receiveFragment">
 
     <fragment
-        android:id="@+id/senderFragment"
-        android:name="com.android.share.ui.sender.SenderFragment"
-        android:label="Sender"
-        tools:layout="@layout/fragment_sender">
+        android:id="@+id/receiveFragment"
+        android:name="com.android.share.ui.receive.ReceiveFragment"
+        android:label="fragment_receive"
+        tools:layout="@layout/fragment_receive" />
+
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.android.share.ui.scan.ScanFragment"
+        android:label="fragment_scan"
+        tools:layout="@layout/fragment_scan">
         <action
-            android:id="@+id/action_senderFragment_to_receiverFragment"
-            app:destination="@id/receiverFragment" />
+            android:id="@+id/action_scanFragment_to_receiveFragment"
+            app:destination="@id/receiveFragment" />
         <action
-            android:id="@+id/action_senderFragment_to_requestFragment"
-            app:destination="@id/requestFragment" />
+            android:id="@+id/action_scanFragment_to_sendFragment"
+            app:destination="@id/sendFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/receiverFragment"
-        android:name="com.android.share.ui.receiver.ReceiverFragment"
-        android:label="Receiver"
-        tools:layout="@layout/fragment_receiver" />
-
     <dialog
-        android:id="@+id/requestFragment"
-        android:name="com.android.share.ui.request.RequestFragment"
-        android:label="fragment_request"
-        tools:layout="@layout/fragment_request">
+        android:id="@+id/sendFragment"
+        android:name="com.android.share.ui.send.SendFragment"
+        android:label="fragment_send"
+        tools:layout="@layout/fragment_send">
         <argument
             android:name="receiver"
             app:argType="string" />
@@ -36,5 +36,6 @@
             android:name="fileUri"
             app:argType="android.net.Uri" />
     </dialog>
+
 
 </navigation>

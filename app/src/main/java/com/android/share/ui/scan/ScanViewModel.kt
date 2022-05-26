@@ -1,4 +1,4 @@
-package com.android.share.ui.sender
+package com.android.share.ui.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SenderViewModel @Inject constructor(private val scanManager: ScanManager) : ViewModel() {
+class ScanViewModel @Inject constructor(private val scanManager: ScanManager) : ViewModel() {
 
     val scanState = scanManager.scanState
 

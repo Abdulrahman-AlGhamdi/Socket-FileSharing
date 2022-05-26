@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.receiver.ReceiverFragment"
+    tools:context=".ui.receive.ReceiveFragment"
     tools:ignore="contentDescription">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -54,7 +54,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:gravity="center"
-        android:text="@string/receiver_ready_message"
+        android:text="@string/receive_ready_message"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -98,7 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/receiver_no_internet_message"
+        android:text="@string/receive_no_internet_message"
         app:layout_constraintEnd_toEndOf="@+id/internet_header"
         app:layout_constraintStart_toStartOf="@+id/internet_header"
         app:layout_constraintTop_toBottomOf="@+id/internet_header" />

@@ -1,8 +1,7 @@
 package com.android.share.manager.receiver
 
 import android.content.Context
-import com.android.share.manager.receiver.ReceiverManagerImpl.ReceiveState.*
-import com.android.share.manager.sender.SenderCallback
+import com.android.share.manager.receiver.ReceiveManagerImpl.ReceiveState.*
 import com.android.share.model.network.NetworkModel
 import com.android.share.util.Constants
 import com.android.share.util.readStringFromStream
@@ -21,13 +20,13 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.roundToInt
 
-class ReceiverManagerImpl @Inject constructor(
+class ReceiveManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) : ReceiverManager {
+) : ReceiveManager {
 
     private val _receiveState: MutableStateFlow<ReceiveState> = MutableStateFlow(Idle)
     override val receiveState = _receiveState.asStateFlow()
-    override var senderCallback: SenderCallback? = null
+    override var receiveCallback: ReceiveCallback? = null
 
     private lateinit var serverSocket: ServerSocket
     private lateinit var clientSocket: Socket
@@ -79,7 +78,7 @@ class ReceiverManagerImpl @Inject constructor(
                 if (connect == Constants.SOCKET_SHARE) _receiveState.value = Connect(sender, name)
 
                 suspendCoroutine<Boolean> { continuation ->
-                    senderCallback = object : SenderCallback {
+                    receiveCallback = object : ReceiveCallback {
                         override fun accept() {
                             socketOutput.writeStringAsStream(Constants.SOCKET_ACCEPT)
                             receiveFile(socketInput)

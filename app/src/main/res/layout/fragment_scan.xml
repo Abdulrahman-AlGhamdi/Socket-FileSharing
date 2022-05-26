@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.sender.SenderFragment"
+    tools:context=".ui.scan.ScanFragment"
     tools:ignore="contentDescription">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/sender_menu"
         app:navigationIcon="@drawable/icon_back_arrow"
-        app:title="@string/send_fragment"
+        app:title="@string/scan_fragment"
         app:titleCentered="true" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -78,7 +78,7 @@
         android:id="@+id/empty_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/send_no_receivers_header"
+        android:text="@string/scan_no_receivers_header"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -91,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/send_no_receivers_message"
+        android:text="@string/scan_no_receivers_message"
         app:layout_constraintEnd_toEndOf="@+id/empty_header"
         app:layout_constraintStart_toStartOf="@+id/empty_header"
         app:layout_constraintTop_toBottomOf="@+id/empty_header" />
@@ -122,7 +122,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/sender_no_internet_message"
+        android:text="@string/scan_no_internet_message"
         app:layout_constraintEnd_toEndOf="@+id/internet_header"
         app:layout_constraintStart_toStartOf="@+id/internet_header"
         app:layout_constraintTop_toBottomOf="@+id/internet_header" />

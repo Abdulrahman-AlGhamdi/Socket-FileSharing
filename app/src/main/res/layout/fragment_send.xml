@@ -4,28 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="24dp"
-    android:paddingTop="16sp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="24dp"
-    tools:context=".ui.request.RequestFragment">
+    android:padding="24sp"
+    tools:context=".ui.send.SendFragment"
+    tools:ignore="contentDescription">
+
+    <ImageView
+        android:id="@+id/file_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/request_title"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
         android:textColor="@color/black"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/file_icon"
+        tools:text="fileName.mp3" />
 
     <LinearLayout
         android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,9 +44,10 @@
             android:id="@+id/message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textSize="16sp"
             android:visibility="visible"
-            tools:text="Are you sure you want to send $fileName file to receiver number: $receiver?" />
+            tools:text="Are you sure you want to send this file to $receiver?" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress"
@@ -45,36 +55,51 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:max="100"
-            android:visibility="visible"
+            android:visibility="gone"
+            app:indicatorColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:trackCornerRadius="8dp"
+            app:trackThickness="15dp" />
 
     </LinearLayout>
 
-    <TextView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/positive"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
-        android:gravity="end"
-        android:textColor="@color/colorPrimary"
-        android:textSize="15sp"
+        android:layout_marginEnd="4dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/black"
+        app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/negative"
         app:layout_constraintTop_toBottomOf="@+id/body"
-        tools:text="Ok" />
+        tools:text="Send" />
 
-    <TextView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/negative"
-        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:gravity="end"
-        android:textColor="@color/colorPrimary"
-        android:textSize="15sp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="4dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:textAllCaps="false"
+        android:textColor="@color/gray"
+        app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/positive"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/body"
         tools:text="Cancel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

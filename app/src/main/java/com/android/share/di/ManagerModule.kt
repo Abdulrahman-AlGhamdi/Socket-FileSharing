@@ -1,7 +1,7 @@
 package com.android.share.di
 
-import com.android.share.manager.receiver.ReceiveManager
-import com.android.share.manager.receiver.ReceiveManagerImpl
+import com.android.share.manager.receive.ReceiveManager
+import com.android.share.manager.receive.ReceiveManagerImpl
 import com.android.share.manager.scan.ScanManager
 import com.android.share.manager.scan.ScanManagerImpl
 import com.android.share.manager.send.SendManager

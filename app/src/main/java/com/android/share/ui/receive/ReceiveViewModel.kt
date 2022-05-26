@@ -2,7 +2,7 @@ package com.android.share.ui.receive
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.share.manager.receiver.ReceiveManager
+import com.android.share.manager.receive.ReceiveManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,6 +14,7 @@ class ReceiveViewModel @Inject constructor(
 ) : ViewModel() {
 
     val receiveState = receiveManager.receiveState
+    val requestState = receiveManager.requestState
 
     fun startReceiving() = viewModelScope.launch {
         receiveManager.startReceiving()

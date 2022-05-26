@@ -1,7 +1,8 @@
-package com.android.share.manager.receiver
+package com.android.share.manager.receive
 
 import android.content.Context
-import com.android.share.manager.receiver.ReceiveManagerImpl.ReceiveState.*
+import com.android.share.manager.receive.ReceiveManagerImpl.ReceiveState.*
+import com.android.share.manager.receive.ReceiveManagerImpl.RequestState.*
 import com.android.share.model.network.NetworkModel
 import com.android.share.util.Constants
 import com.android.share.util.readStringFromStream
@@ -24,8 +25,12 @@ class ReceiveManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ReceiveManager {
 
-    private val _receiveState: MutableStateFlow<ReceiveState> = MutableStateFlow(Idle)
+    private val _receiveState: MutableStateFlow<ReceiveState> = MutableStateFlow(ReceiveIdle)
     override val receiveState = _receiveState.asStateFlow()
+
+    private val _requestState: MutableStateFlow<RequestState> = MutableStateFlow(RequestIdle)
+    override val requestState = _requestState.asStateFlow()
+
     override var receiveCallback: ReceiveCallback? = null
 
     private lateinit var serverSocket: ServerSocket
@@ -62,7 +67,7 @@ class ReceiveManagerImpl @Inject constructor(
         exception.printStackTrace()
     } catch (exception: Exception) {
         exception.printStackTrace()
-        _receiveState.value = Failed
+        _requestState.value = RequestFailed
     }
 
     private suspend fun receiveRequest() {
@@ -75,7 +80,8 @@ class ReceiveManagerImpl @Inject constructor(
             clientSocket.getOutputStream().use { socketOutput ->
                 val (connect, name) = request.split(":")
                 val sender = clientSocket.inetAddress.hostName.substringAfterLast(".")
-                if (connect == Constants.SOCKET_SHARE) _receiveState.value = Connect(sender, name)
+                if (connect == Constants.SOCKET_SHARE)
+                    _requestState.value = RequestConnect(sender, name)
 
                 suspendCoroutine<Boolean> { continuation ->
                     receiveCallback = object : ReceiveCallback {
@@ -87,7 +93,7 @@ class ReceiveManagerImpl @Inject constructor(
 
                         override fun refuse() {
                             socketOutput.writeStringAsStream(Constants.SOCKET_REFUSE)
-                            _receiveState.value = Idle
+                            _requestState.value = RequestIdle
                             continuation.resume(true)
                         }
                     }
@@ -114,11 +120,11 @@ class ReceiveManagerImpl @Inject constructor(
                 } != -1) {
                 fileOutput.write(bufferSize, 0, bytesRead)
                 val progress = ((downloadProgress.toDouble() / fileSize) * 100).roundToInt()
-                _receiveState.value = ReceiveProgress(name, progress)
+                _requestState.value = RequestProgress(name, progress)
             }
         }
 
-        _receiveState.value = ReceiveComplete(name)
+        _requestState.value = RequestComplete(name)
     }
 
     override fun closeServerSocket() {
@@ -132,12 +138,16 @@ class ReceiveManagerImpl @Inject constructor(
     }
 
     sealed class ReceiveState {
-        object Idle : ReceiveState()
-        object Failed : ReceiveState()
+        object ReceiveIdle : ReceiveState()
         object ReceiveInitializing : ReceiveState()
-        data class ReceiveComplete(val name: String) : ReceiveState()
         data class ReceiveStarted(val uniqueNumber: String) : ReceiveState()
-        data class Connect(val uniqueNumber: String, val name: String) : ReceiveState()
-        data class ReceiveProgress(val name: String, val progress: Int) : ReceiveState()
+    }
+
+    sealed class RequestState {
+        object RequestIdle : RequestState()
+        object RequestFailed : RequestState()
+        data class RequestComplete(val name: String) : RequestState()
+        data class RequestProgress(val name: String, val progress: Int) : RequestState()
+        data class RequestConnect(val uniqueNumber: String, val name: String) : RequestState()
     }
 }

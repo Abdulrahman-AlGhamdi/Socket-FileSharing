@@ -65,6 +65,7 @@ class ReceiveManagerImpl @Inject constructor(
         while (!serverSocket.isClosed) receiveRequest()
     } catch (exception: SocketException) {
         exception.printStackTrace()
+        _receiveState.value = ReceiveClosed
     } catch (exception: Exception) {
         exception.printStackTrace()
         _requestState.value = RequestFailed
@@ -139,6 +140,7 @@ class ReceiveManagerImpl @Inject constructor(
 
     sealed class ReceiveState {
         object ReceiveIdle : ReceiveState()
+        object ReceiveClosed : ReceiveState()
         object ReceiveInitializing : ReceiveState()
         data class ReceiveStarted(val uniqueNumber: String) : ReceiveState()
     }

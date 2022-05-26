@@ -1,4 +1,4 @@
-package com.android.share.manager.receiver
+package com.android.share.manager.receive
 
 interface ReceiveCallback {
     fun accept()

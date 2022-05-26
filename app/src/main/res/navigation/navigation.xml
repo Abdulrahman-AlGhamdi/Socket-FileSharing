@@ -9,7 +9,11 @@
         android:id="@+id/receiveFragment"
         android:name="com.android.share.ui.receive.ReceiveFragment"
         android:label="fragment_receive"
-        tools:layout="@layout/fragment_receive" />
+        tools:layout="@layout/fragment_receive">
+        <action
+            android:id="@+id/action_receiveFragment_to_requestFragment"
+            app:destination="@id/requestFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/scanFragment"
@@ -36,6 +40,11 @@
             android:name="fileUri"
             app:argType="android.net.Uri" />
     </dialog>
+    <dialog
+        android:id="@+id/requestFragment"
+        android:name="com.android.share.ui.request.RequestFragment"
+        android:label="fragment_request"
+        tools:layout="@layout/fragment_request" />
 
 
 </navigation>

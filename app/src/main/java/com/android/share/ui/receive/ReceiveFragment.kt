@@ -42,9 +42,10 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
         binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
 
         binding.receive.setOnClickListener {
-            buttonStatus = if (buttonStatus == ButtonStatus.NOT_ACTIVE)
-                ButtonStatus.INITIALIZING else ButtonStatus.NOT_ACTIVE
-            updateButtonStyle(buttonStatus)
+            if (buttonStatus == ButtonStatus.NOT_ACTIVE) {
+                if (::receiveJob.isInitialized) receiveJob.cancel()
+                receiveJob = viewModel.startReceiving()
+            } else viewModel.closeServerSocket()
         }
 
         ConnectivityManager(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
@@ -72,6 +73,8 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
         viewModel.receiveState.collect {
             when (it) {
                 ReceiveState.ReceiveInitializing -> {
+                    buttonStatus = ButtonStatus.INITIALIZING
+                    updateButtonStyle(buttonStatus)
                     binding.receiving.visibility = View.GONE
                     binding.internet.visibility = View.GONE
                     binding.receive.visibility = View.VISIBLE
@@ -87,6 +90,8 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
                     binding.receiving.visibility = View.VISIBLE
                 }
                 ReceiveState.ReceiveClosed -> {
+                    buttonStatus = ButtonStatus.NOT_ACTIVE
+                    updateButtonStyle(buttonStatus)
                     binding.receiving.visibility = View.GONE
                     binding.internet.visibility = View.GONE
                     binding.progress.visibility = View.GONE
@@ -114,9 +119,6 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
             binding.receive.text = null
             binding.receive.isEnabled = false
             binding.receive.setBackgroundColor(resources.getColor(R.color.gray, null))
-
-            if (::receiveJob.isInitialized) receiveJob.cancel()
-            receiveJob = viewModel.startReceiving()
         }
         ButtonStatus.ACTIVE -> {
             binding.receive.isEnabled = true
@@ -124,7 +126,6 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
             binding.receive.setBackgroundColor(resources.getColor(R.color.red, null))
         }
         ButtonStatus.NOT_ACTIVE -> {
-            viewModel.closeServerSocket()
             binding.receive.isEnabled = true
             binding.receive.setText(R.string.receive_button_start)
             binding.receive.setBackgroundColor(resources.getColor(R.color.green, null))

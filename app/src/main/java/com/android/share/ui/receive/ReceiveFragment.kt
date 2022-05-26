@@ -24,41 +24,42 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
     private val binding by viewBinding(FragmentReceiveBinding::bind)
     private val viewModel by activityViewModels<ReceiveViewModel>()
     private val directions = ReceiveFragmentDirections
-    private var isActive = false
 
     private lateinit var receiveJob: Job
     private lateinit var receiveStateJob: Job
     private lateinit var requestStateJob: Job
+    private lateinit var buttonStatus: ButtonStatus
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         init()
+        receiveStateJob = getReceiveState()
+        requestStateJob = getRequestState()
     }
 
     private fun init() {
         binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
 
         binding.receive.setOnClickListener {
-            isActive = !isActive
-            updateButtonStyle()
+            buttonStatus = if (buttonStatus == ButtonStatus.NOT_ACTIVE)
+                ButtonStatus.INITIALIZING else ButtonStatus.NOT_ACTIVE
+            updateButtonStyle(buttonStatus)
         }
 
         ConnectivityManager(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
             if (hasInternet) {
-                binding.receive.isEnabled = true
+                buttonStatus = ButtonStatus.NOT_ACTIVE
+                updateButtonStyle(buttonStatus)
                 binding.progress.visibility = View.GONE
                 binding.internet.visibility = View.GONE
                 binding.receiving.visibility = View.GONE
                 binding.receive.visibility = View.VISIBLE
             } else {
                 if (::receiveJob.isInitialized) receiveJob.cancel()
-
-                isActive = false
-                updateButtonStyle()
                 viewModel.closeServerSocket()
-
-                binding.receive.isEnabled = true
+                buttonStatus = ButtonStatus.NOT_ACTIVE
+                updateButtonStyle(buttonStatus)
                 binding.receive.visibility = View.GONE
                 binding.progress.visibility = View.GONE
                 binding.receiving.visibility = View.GONE
@@ -71,19 +72,25 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
         viewModel.receiveState.collect {
             when (it) {
                 ReceiveState.ReceiveInitializing -> {
-                    binding.receive.isEnabled = false
                     binding.receiving.visibility = View.GONE
                     binding.internet.visibility = View.GONE
                     binding.receive.visibility = View.VISIBLE
                     binding.progress.visibility = View.VISIBLE
                 }
                 is ReceiveState.ReceiveStarted -> {
-//                    binding.receiver.text = it.uniqueNumber
-                    binding.receive.isEnabled = true
+                    // binding.receiver.text = it.uniqueNumber
+                    buttonStatus = ButtonStatus.ACTIVE
+                    updateButtonStyle(buttonStatus)
                     binding.progress.visibility = View.GONE
                     binding.internet.visibility = View.GONE
                     binding.receive.visibility = View.VISIBLE
                     binding.receiving.visibility = View.VISIBLE
+                }
+                ReceiveState.ReceiveClosed -> {
+                    binding.receiving.visibility = View.GONE
+                    binding.internet.visibility = View.GONE
+                    binding.progress.visibility = View.GONE
+                    binding.receive.visibility = View.VISIBLE
                 }
                 ReceiveState.ReceiveIdle -> Unit
             }
@@ -102,25 +109,29 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
         }
     }
 
-    private fun updateButtonStyle(): Unit = if (isActive) {
-        binding.receive.setBackgroundColor(resources.getColor(R.color.red, null))
-        binding.receive.setText(R.string.receive_button_stop)
+    private fun updateButtonStyle(buttonStatus: ButtonStatus): Unit = when (buttonStatus) {
+        ButtonStatus.INITIALIZING -> {
+            binding.receive.text = null
+            binding.receive.isEnabled = false
+            binding.receive.setBackgroundColor(resources.getColor(R.color.gray, null))
 
-        if (::receiveJob.isInitialized) receiveJob.cancel()
-        receiveJob = viewModel.startReceiving()
-        receiveStateJob = getReceiveState()
-        requestStateJob = getRequestState()
-    } else {
-        viewModel.closeServerSocket()
-        binding.receive.setBackgroundColor(resources.getColor(R.color.green, null))
-        binding.receive.setText(R.string.receive_button_start)
-
-        binding.receive.isEnabled = true
-        binding.receiving.visibility = View.GONE
-        binding.internet.visibility = View.GONE
-        binding.progress.visibility = View.GONE
-        binding.receive.visibility = View.VISIBLE
+            if (::receiveJob.isInitialized) receiveJob.cancel()
+            receiveJob = viewModel.startReceiving()
+        }
+        ButtonStatus.ACTIVE -> {
+            binding.receive.isEnabled = true
+            binding.receive.setText(R.string.receive_button_stop)
+            binding.receive.setBackgroundColor(resources.getColor(R.color.red, null))
+        }
+        ButtonStatus.NOT_ACTIVE -> {
+            viewModel.closeServerSocket()
+            binding.receive.isEnabled = true
+            binding.receive.setText(R.string.receive_button_start)
+            binding.receive.setBackgroundColor(resources.getColor(R.color.green, null))
+        }
     }
+
+    private enum class ButtonStatus { ACTIVE, NOT_ACTIVE, INITIALIZING }
 
     override fun onDestroyView() {
         if (::receiveJob.isInitialized) receiveJob.cancel()

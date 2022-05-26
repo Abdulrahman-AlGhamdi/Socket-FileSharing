@@ -1,4 +1,4 @@
-package com.android.share.ui.sender
+package com.android.share.ui.scan
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.share.databinding.SenderUserItemBinding
 import java.util.*
 
-class SenderAdapter(
-    private val senderAdapterCallback: SenderAdapterCallback
-) : RecyclerView.Adapter<SenderAdapter.SenderViewHolder>() {
+class ScanAdapter(
+    private val scanAdapterCallback: ScanAdapterCallback
+) : RecyclerView.Adapter<ScanAdapter.SenderViewHolder>() {
 
     private val receiversList = mutableListOf<String>()
 
@@ -30,7 +30,7 @@ class SenderAdapter(
 
             binding.name.text = uniqueNumber
             binding.background.setBackgroundColor(color)
-            binding.root.setOnClickListener { senderAdapterCallback.onReceiverClick(receiver) }
+            binding.root.setOnClickListener { scanAdapterCallback.onReceiverClick(receiver) }
         }
     }
 

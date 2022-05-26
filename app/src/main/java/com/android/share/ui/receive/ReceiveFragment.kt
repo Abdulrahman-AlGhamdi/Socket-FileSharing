@@ -1,4 +1,4 @@
-package com.android.share.ui.receiver
+package com.android.share.ui.receive
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -8,9 +8,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.share.R
-import com.android.share.databinding.FragmentReceiverBinding
-import com.android.share.manager.receiver.ReceiverManagerImpl.ReceiveState
+import com.android.share.databinding.FragmentReceiveBinding
 import com.android.share.manager.connectivity.ConnectivityManager
+import com.android.share.manager.receiver.ReceiveManagerImpl.ReceiveState
 import com.android.share.util.viewBinding
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,10 +19,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
+class ReceiveFragment : Fragment(R.layout.fragment_receive) {
 
-    private val binding by viewBinding(FragmentReceiverBinding::bind)
-    private val viewModel by viewModels<ReceiverViewModel>()
+    private val binding by viewBinding(FragmentReceiveBinding::bind)
+    private val viewModel by viewModels<ReceiveViewModel>()
 
     private var isActive = false
     private var progressDialog: AlertDialog? = null
@@ -71,7 +71,7 @@ class ReceiverFragment : Fragment(R.layout.fragment_receiver) {
     }
 
     private fun getReceiveState() = lifecycleScope.launch(Dispatchers.Main) {
-        viewModel.authenticateState.collect {
+        viewModel.receiveState.collect {
             when (it) {
                 ReceiveState.ReceiveInitializing -> {
                     dismissDialog()

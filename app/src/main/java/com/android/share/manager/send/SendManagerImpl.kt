@@ -1,8 +1,8 @@
-package com.android.share.manager.sender
+package com.android.share.manager.send
 
 import android.content.Context
 import androidx.documentfile.provider.DocumentFile
-import com.android.share.manager.sender.RequestManagerImpl.RequestState.*
+import com.android.share.manager.send.SendManagerImpl.RequestState.*
 import com.android.share.util.Constants
 import com.android.share.util.readStringFromStream
 import com.android.share.util.writeStringAsStream
@@ -17,9 +17,9 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-class RequestManagerImpl @Inject constructor(
+class SendManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) : RequestManager {
+) : SendManager {
 
     private val _requestState: MutableStateFlow<RequestState> = MutableStateFlow(RequestIdle)
     override val requestState = _requestState.asStateFlow()

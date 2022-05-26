@@ -5,7 +5,7 @@
     <item
         android:id="@+id/rescan"
         android:icon="@drawable/icon_rescan"
-        android:title="@string/sender_rescan"
+        android:title="@string/scan_rescan"
         app:showAsAction="always" />
 
 </menu>

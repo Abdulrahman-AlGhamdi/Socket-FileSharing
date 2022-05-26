@@ -2,31 +2,37 @@
     <!-- Application Name -->
     <string name="app_name">File Sharing</string>
 
-    <!-- Send Fragment Strings -->
-    <string name="send_fragment">Send Files</string>
-    <string name="send_no_receivers_header">No Receivers Found</string>
-    <string name="send_no_receivers_message">Please make sure both the receiver and sender\nin the same network</string>
-    <string name="sender_no_internet_message">Please enable the internet to start scanning for receivers</string>
-    <string name="sender_rescan">Rescan</string>
-
     <!-- Receive Fragment Strings -->
     <string name="receive_fragment">Receive Files</string>
     <string name="receive_button_start">Start</string>
     <string name="receive_button_stop">Stop</string>
-    <string name="receiver_no_internet_message">Please enable the internet in order to be available\nto the sender and receive files</string>
-    <string name="receiver_ready_message">Your device is ready to receive files\nyou will be available to the senders to send you files</string>
+    <string name="receive_no_internet_message">Please enable the internet in order to be available\nto the sender and receive files</string>
+    <string name="receive_ready_message">Your device is ready to receive files\nyou will be available to the senders to send you files</string>
 
-    <!-- Request Fragment Strings -->
-    <string name="request_title">Request Sending File</string>
-    <string name="request_started">Request connection has been sent the receiver and waiting for the approval</string>
-    <string name="request_failed">The receiver requested is no longer available</string>
-    <string name="request_refused">The receiver has refused your connection request</string>
-    <string name="request_idle">"Are you sure you want to send %s1 file to receiver number: %s2?"</string>
-    <string name="request_progress">Sending %s file</string>
-    <string name="request_completed">%s file has been sent successfully</string>
-    <string name="request_positive_yes">Yes</string>
-    <string name="request_negative_cancel">Cancel</string>
-    <string name="request_positive_ok">OK</string>
+    <!-- Scan Fragment Strings -->
+    <string name="scan_fragment">Receivers Scan</string>
+    <string name="scan_no_receivers_header">No Receivers Found</string>
+    <string name="scan_no_receivers_message">Please make sure both the receiver and sender\nin the same network</string>
+    <string name="scan_no_internet_message">Please enable the internet to start scanning for receivers</string>
+    <string name="scan_rescan">Rescan</string>
+
+    <!-- Send Fragment Strings -->
+    <string name="send_fragment">Receivers Scan</string>
+    <string name="send_title">Request Sending File</string>
+    <string name="send_started_title">Request Sent</string>
+    <string name="send_started_message">Request sending file has been sent the receiver and waiting for the approval</string>
+    <string name="send_failed_title">Something Went Wrong!</string>
+    <string name="send_failed_message">The receiver requested is no longer available, Please rescan for receivers</string>
+    <string name="send_refused_title">Receiver Denied</string>
+    <string name="send_refused_message">The receiver has refused your sending file request</string>
+    <string name="send_idle">"Are you sure you want to send this file to %s?"</string>
+    <string name="send_progress_title">Sending File…</string>
+    <string name="send_progress_message">Please wait for %s file to be transferred</string>
+    <string name="send_completed_title">File Sent</string>
+    <string name="send_completed_message">%s file has been sent successfully</string>
+    <string name="send_positive_send">Send</string>
+    <string name="send_positive_dismiss">Dismiss</string>
+    <string name="send_negative_cancel">Cancel</string>
 
     <!-- Common Strings -->
     <string name="no_internet_header">No Internet Connection</string>

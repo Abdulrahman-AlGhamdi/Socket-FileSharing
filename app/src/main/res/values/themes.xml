@@ -17,6 +17,15 @@
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem.DropDownItem</item>
     </style>
 
+    <style name="RoundedDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/DialogCorners</item>
+    </style>
+
+    <style name="DialogCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
     <!-- Spinner Style -->
     <style name="SpinnerStyle" parent="@style/Base.Widget.AppCompat.Spinner.Underlined">
         <item name="backgroundTint">@color/colorAccent</item>

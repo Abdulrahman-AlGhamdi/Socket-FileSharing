@@ -9,13 +9,17 @@ import com.android.share.util.readStringFromStream
 import com.android.share.util.writeStringAsStream
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.*
+import java.net.Inet4Address
+import java.net.NetworkInterface
+import java.net.ServerSocket
+import java.net.Socket
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -39,9 +43,18 @@ class ReceiveManagerImpl @Inject constructor(
     private lateinit var clientOutputStream: OutputStream
 
     override suspend fun startReceiving() = withContext(Dispatchers.IO) {
-        val network = getDeviceAddress()
-        _receiveState.value = ReceiveInitializing
-        startServerSocket(network.address)
+        try {
+            val network = getDeviceAddress()
+            _receiveState.value = ReceiveInitializing
+            serverSocket = ServerSocket(52525, 0, network.address)
+            val uniqueNumber = network.address.canonicalHostName.substringAfterLast(".")
+            _receiveState.value = ReceiveStarted(uniqueNumber)
+            while (!serverSocket.isClosed) waitForClient()
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+            _receiveState.value = ReceiveClosed
+            _requestState.value = RequestFailed
+        }
     }
 
     private fun getDeviceAddress(): NetworkModel {
@@ -58,46 +71,40 @@ class ReceiveManagerImpl @Inject constructor(
         }.first()
     }
 
-    private suspend fun startServerSocket(address: Inet4Address) = try {
-        serverSocket = ServerSocket(52525, 0, address)
-        val uniqueNumber = address.canonicalHostName.substringAfterLast(".")
-        _receiveState.value = ReceiveStarted(uniqueNumber)
-        while (!serverSocket.isClosed) receiveRequest()
-    } catch (exception: SocketException) {
-        exception.printStackTrace()
-        _receiveState.value = ReceiveClosed
-    } catch (exception: Exception) {
-        exception.printStackTrace()
-        _requestState.value = RequestFailed
-    }
-
-    private suspend fun receiveRequest() {
+    private suspend fun waitForClient() {
         clientSocket = serverSocket.accept()
 
         clientSocket.getInputStream().use { socketInput ->
-            val request = socketInput.readStringFromStream()
-            if (request == Constants.SOCKET_SCAN) return
+            val clientRequest = socketInput.readStringFromStream()
 
-            clientSocket.getOutputStream().use { socketOutput ->
-                val (connect, name) = request.split(":")
-                val sender = clientSocket.inetAddress.hostName.substringAfterLast(".")
-                if (connect == Constants.SOCKET_SHARE)
-                    _requestState.value = RequestConnect(sender, name)
+            if (clientRequest != Constants.SOCKET_SCAN) {
+                val (connect, name) = clientRequest.split(":")
+                if (connect == Constants.SOCKET_SHARE) receiveRequest(socketInput, name)
+            } else return
+        }
+    }
 
-                suspendCoroutine<Boolean> { continuation ->
-                    receiveCallback = object : ReceiveCallback {
-                        override fun accept() {
-                            socketOutput.writeStringAsStream(Constants.SOCKET_ACCEPT)
-                            receiveFile(socketInput)
-                            continuation.resume(true)
-                        }
+    private suspend fun receiveRequest(
+        socketInput: InputStream,
+        name: String
+    ): Unit = clientSocket.getOutputStream().use { socketOutput ->
 
-                        override fun refuse() {
-                            socketOutput.writeStringAsStream(Constants.SOCKET_REFUSE)
-                            _requestState.value = RequestIdle
-                            continuation.resume(true)
-                        }
-                    }
+        delay(500)
+        val sender = clientSocket.inetAddress.hostName.substringAfterLast(".")
+        _requestState.value = RequestConnect(sender, name)
+
+        suspendCoroutine<Boolean> { continuation ->
+            receiveCallback = object : ReceiveCallback {
+                override fun accept() {
+                    socketOutput.writeStringAsStream(Constants.SOCKET_ACCEPT)
+                    receiveFile(socketInput)
+                    continuation.resume(true)
+                }
+
+                override fun refuse() {
+                    socketOutput.writeStringAsStream(Constants.SOCKET_REFUSE)
+                    _requestState.value = RequestIdle
+                    continuation.resume(true)
                 }
             }
         }

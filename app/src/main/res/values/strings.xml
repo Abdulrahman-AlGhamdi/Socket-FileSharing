@@ -34,8 +34,13 @@
     <string name="send_positive_dismiss">Dismiss</string>
     <string name="send_negative_cancel">Cancel</string>
 
+    <!-- Name Fragment Strings -->
+    <string name="name_message">Please write your name in order to send and receive files</string>
+    <string name="name_hint">Enter your name</string>
+    <string name="name_error">Name must not be empty</string>
+    <string name="name_note">NOTE: this name can be changed later at any time</string>
+    <string name="name_confirm">Confirm</string>
+
     <!-- Common Strings -->
     <string name="no_internet_header">No Internet Connection</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -41,6 +41,13 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
     private fun init() {
         binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
 
+        binding.toolbar.setOnMenuItemClickListener {
+            if (it.itemId != R.id.imported_files) return@setOnMenuItemClickListener false
+            val action = directions.actionReceiveFragmentToImportedFilesFragment()
+            findNavController().navigateTo(action, R.id.receiveFragment)
+            true
+        }
+
         binding.receive.setOnClickListener {
             if (buttonStatus == ButtonStatus.NOT_ACTIVE) {
                 if (::receiveJob.isInitialized) receiveJob.cancel()

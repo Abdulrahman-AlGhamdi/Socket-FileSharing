@@ -49,17 +49,16 @@ class SendFragment : DialogFragment() {
                 RequestState.RequestIdle -> {
                     val documentFile = DocumentFile.fromSingleUri(requireContext(), args.fileUri)!!
                     val fileName = documentFile.name ?: UUID.randomUUID().toString()
-                    val uniqueNumber = args.receiver.substringAfterLast(".")
 
                     binding.title.text = fileName
-                    binding.message.text = getString(R.string.send_idle, uniqueNumber)
+                    binding.message.text = getString(R.string.send_idle, args.receiverName)
                     binding.positive.setText(R.string.send_positive_send)
                     binding.negative.setText(R.string.send_negative_cancel)
                     binding.fileIcon.setImageResource(R.drawable.icon_image)
                     binding.negative.setOnClickListener { dismiss() }
                     binding.positive.setOnClickListener {
                         if (::requestJob.isInitialized) requestJob.cancel()
-                        requestJob = viewModel.sendRequest(args.receiver, documentFile)
+                        requestJob = viewModel.sendRequest(args.receiverIpAddress, documentFile)
                     }
 
                     binding.progress.visibility = View.GONE

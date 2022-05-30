@@ -44,9 +44,10 @@ class ScanFragment : Fragment(R.layout.fragment_scan) {
 
     private fun init() {
         scanAdapter = ScanAdapter(object : ScanAdapterCallback {
-            override fun onReceiverClick(receiver: String) {
+            override fun onReceiverClick(receiver: Pair<String, String>) {
                 if (fileUri != Uri.EMPTY && getFileFromUri(fileUri) != null) {
-                    val action = directions.actionScanFragmentToSendFragment(receiver, fileUri)
+                    val (name, address) = receiver
+                    val action = directions.actionScanFragmentToSendFragment(name, address, fileUri)
                     findNavController().navigateTo(action, R.id.scanFragment)
                 } else requireView().showSnackBar("Please choose file in order to share it")
             }
@@ -96,8 +97,6 @@ class ScanFragment : Fragment(R.layout.fragment_scan) {
                 is ScanState.Progress -> {
                     binding.progress.max = state.max
                     binding.progress.setProgress(state.progress, true)
-                    binding.sender.text = state.uniqueNumber
-
                     binding.empty.visibility = View.GONE
                     binding.result.visibility = View.GONE
                     binding.internet.visibility = View.GONE
@@ -105,7 +104,6 @@ class ScanFragment : Fragment(R.layout.fragment_scan) {
                 }
                 is ScanState.Complete -> {
                     scanAdapter.setReceiversList(state.receivers)
-
                     binding.empty.visibility = View.GONE
                     binding.internet.visibility = View.GONE
                     binding.scanning.visibility = View.GONE

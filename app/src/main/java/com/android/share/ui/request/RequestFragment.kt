@@ -37,7 +37,7 @@ class RequestFragment : DialogFragment() {
             when (it) {
                 is RequestState.RequestConnect -> {
                     binding.title.text = "Request Connection"
-                    binding.message.text = "Sender number: ${it.uniqueNumber} would like to share a ${it.name} file"
+                    binding.message.text = "${it.senderName} would like to share a ${it.name} file"
                     binding.positive.text = "Accept"
                     binding.negative.text = "Refuse"
                     binding.positive.setOnClickListener { viewModel.requestCallback(true) }

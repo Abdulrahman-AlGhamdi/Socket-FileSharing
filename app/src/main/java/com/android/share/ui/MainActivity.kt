@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val receiverName = preferenceManager.getString(Constants.RECEIVER_NAME)
+        val receiverName = preferenceManager.getString(Constants.USERNAME)
         if (receiverName.isNotEmpty()) return
         navController.navigate(R.id.nameFragment)
     }

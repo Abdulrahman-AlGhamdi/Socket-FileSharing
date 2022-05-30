@@ -1,5 +1,5 @@
 package com.android.share.ui.scan
 
 interface ScanAdapterCallback {
-    fun onReceiverClick(receiver: String)
+    fun onReceiverClick(receiver: Pair<String, String>)
 }

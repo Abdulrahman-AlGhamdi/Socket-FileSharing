@@ -1,8 +1,10 @@
 package com.android.share.manager.scan
 
+import android.util.Log
 import com.android.share.manager.scan.ScanManagerImpl.ScanState.*
 import com.android.share.model.network.NetworkModel
 import com.android.share.util.Constants
+import com.android.share.util.readStringFromStream
 import com.android.share.util.writeStringAsStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -30,7 +32,6 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
             return@withContext
         }
 
-        val uniqueNumber = network.address.canonicalHostName.substringAfterLast(".")
         val (baseIp, networkSize) = network.address.maskWith(network.prefix)
         val addresses = allAddresses(baseIp, networkSize)
         var counter = 0
@@ -38,9 +39,13 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
         val reachableAddresses = addresses.chunked(2).mapNotNull { ipAddresses ->
             async {
                 ipAddresses.mapNotNull { ipAddress ->
-                    _scanState.value = Progress(uniqueNumber, networkSize, counter++)
+                    _scanState.value = Progress(networkSize, counter++)
                     val isReachable = ipAddress.isReachable(250)
-                    if (isReachable && isTcpPortOpen(ipAddress)) ipAddress.canonicalHostName else null
+                    val (isPortOpen, receiverName) = isTcpPortOpen(ipAddress)
+                    if (isReachable && isPortOpen) Pair(
+                        receiverName,
+                        ipAddress.canonicalHostName
+                    ) else null
                 }
             }
         }.toList().awaitAll().flatten()
@@ -87,15 +92,15 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
         ) as Inet4Address
     }
 
-    private fun isTcpPortOpen(ipAddress: Inet4Address): Boolean {
+    private fun isTcpPortOpen(ipAddress: Inet4Address): Pair<Boolean, String> {
         val socket = Socket()
 
         return try {
             socket.connect(InetSocketAddress(ipAddress, 52525), 250)
-            socket.getOutputStream().use { it.writeStringAsStream(Constants.SOCKET_SCAN) }
-            true
+            socket.getOutputStream().writeStringAsStream(Constants.SOCKET_SCAN)
+            Pair(true, socket.getInputStream().readStringFromStream())
         } catch (ex: Exception) {
-            false
+            Pair(false, "")
         } finally {
             socket.close()
         }
@@ -105,7 +110,7 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
         object Idle : ScanState()
         object Empty : ScanState()
         object NoInternet : ScanState()
-        data class Complete(val receivers: List<String>) : ScanState()
-        data class Progress(val uniqueNumber: String, val max: Int, val progress: Int) : ScanState()
+        data class Complete(val receivers: List<Pair<String, String>>) : ScanState()
+        data class Progress(val max: Int, val progress: Int) : ScanState()
     }
 }

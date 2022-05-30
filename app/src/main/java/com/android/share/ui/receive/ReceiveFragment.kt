@@ -80,8 +80,7 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
                     binding.receive.visibility = View.VISIBLE
                     binding.progress.visibility = View.VISIBLE
                 }
-                is ReceiveState.ReceiveStarted -> {
-                    // binding.receiver.text = it.uniqueNumber
+                ReceiveState.ReceiveStarted -> {
                     buttonStatus = ButtonStatus.ACTIVE
                     updateButtonStyle(buttonStatus)
                     binding.progress.visibility = View.GONE

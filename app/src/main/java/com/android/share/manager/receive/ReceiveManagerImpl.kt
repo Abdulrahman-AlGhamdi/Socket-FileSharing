@@ -80,7 +80,8 @@ class ReceiveManagerImpl @Inject constructor(
                 if (connect == Constants.SOCKET_SHARE) receiveRequest(socketInput, fileName, sender)
             } else {
                 val receiverName = preferenceManager.getString(Constants.USERNAME)
-                clientSocket.getOutputStream().use { it.writeStringAsStream(receiverName) }
+                val userInfo = "$receiverName:phone"
+                clientSocket.getOutputStream().use { it.writeStringAsStream(userInfo) }
             }
         }
     }

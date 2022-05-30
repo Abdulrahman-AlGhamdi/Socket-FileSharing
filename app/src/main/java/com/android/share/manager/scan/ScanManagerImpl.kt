@@ -1,6 +1,5 @@
 package com.android.share.manager.scan
 
-import android.util.Log
 import com.android.share.manager.scan.ScanManagerImpl.ScanState.*
 import com.android.share.model.network.NetworkModel
 import com.android.share.util.Constants
@@ -36,16 +35,14 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
         val addresses = allAddresses(baseIp, networkSize)
         var counter = 0
 
-        val reachableAddresses = addresses.chunked(2).mapNotNull { ipAddresses ->
+        val reachableAddresses = addresses.chunked(2).map { ipAddresses ->
             async {
                 ipAddresses.mapNotNull { ipAddress ->
                     _scanState.value = Progress(networkSize, counter++)
                     val isReachable = ipAddress.isReachable(250)
-                    val (isPortOpen, receiverName) = isTcpPortOpen(ipAddress)
-                    if (isReachable && isPortOpen) Pair(
-                        receiverName,
-                        ipAddress.canonicalHostName
-                    ) else null
+                    if (!isReachable) return@mapNotNull null
+                    val receiver = isTcpPortOpen(ipAddress)
+                    if (receiver != null) "$receiver:${ipAddress.canonicalHostName}" else null
                 }
             }
         }.toList().awaitAll().flatten()
@@ -92,17 +89,13 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
         ) as Inet4Address
     }
 
-    private fun isTcpPortOpen(ipAddress: Inet4Address): Pair<Boolean, String> {
-        val socket = Socket()
-
+    private fun isTcpPortOpen(ipAddress: Inet4Address): String? = Socket().use {
         return try {
-            socket.connect(InetSocketAddress(ipAddress, 52525), 250)
-            socket.getOutputStream().writeStringAsStream(Constants.SOCKET_SCAN)
-            Pair(true, socket.getInputStream().readStringFromStream())
+            it.connect(InetSocketAddress(ipAddress, 52525), 250)
+            it.getOutputStream().writeStringAsStream(Constants.SOCKET_SCAN)
+            it.getInputStream().readStringFromStream()
         } catch (ex: Exception) {
-            Pair(false, "")
-        } finally {
-            socket.close()
+            null
         }
     }
 
@@ -110,7 +103,7 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
         object Idle : ScanState()
         object Empty : ScanState()
         object NoInternet : ScanState()
-        data class Complete(val receivers: List<Pair<String, String>>) : ScanState()
+        data class Complete(val receivers: List<String>) : ScanState()
         data class Progress(val max: Int, val progress: Int) : ScanState()
     }
 }

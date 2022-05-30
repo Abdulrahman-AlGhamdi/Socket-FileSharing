@@ -1,19 +1,19 @@
 package com.android.share.ui.scan
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.android.share.R
 import com.android.share.databinding.SenderUserItemBinding
-import java.util.*
+import com.android.share.util.Constants
 
 class ScanAdapter(
     private val scanAdapterCallback: ScanAdapterCallback
 ) : RecyclerView.Adapter<ScanAdapter.SenderViewHolder>() {
 
-    private val receiversList = mutableListOf<Pair<String, String>>()
+    private val receiversList = mutableListOf<String>()
 
-    fun setReceiversList(list: List<Pair<String, String>>) {
+    fun setReceiversList(list: List<String>) {
         receiversList.clear()
         receiversList.addAll(list)
         notifyDataSetChanged()
@@ -23,13 +23,15 @@ class ScanAdapter(
         private val binding: SenderUserItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(receiver: Pair<String, String>) {
-            val rnd = Random()
-            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+        fun bind(receiver: String) {
+            val (name, device, address) = receiver.split(":")
+            val randomColor = itemView.resources.getColor(Constants.colorList.random(), null)
 
-            binding.name.text = receiver.first
-            binding.background.setBackgroundColor(color)
-            binding.root.setOnClickListener { scanAdapterCallback.onReceiverClick(receiver) }
+            binding.name.text = name
+            binding.address.text = address
+            binding.color.setCardBackgroundColor(randomColor)
+            binding.root.setOnClickListener { scanAdapterCallback.onReceiverClick(name, address) }
+            if (device == Constants.PHONE_DEVICE) binding.device.setImageResource(R.drawable.icon_phone)
         }
     }
 

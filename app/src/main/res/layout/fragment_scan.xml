@@ -41,19 +41,6 @@
         app:lottie_fileName="lottie/wave_animation.json"
         app:lottie_loop="true" />
 
-    <TextView
-        android:id="@+id/sender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:drawableTopCompat="@drawable/icon_send"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
@@ -131,8 +118,8 @@
         android:id="@+id/scanning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="animation, progress, sender" />
+        android:visibility="visible"
+        app:constraint_referenced_ids="animation, progress" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/result"

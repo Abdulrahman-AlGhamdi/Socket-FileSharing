@@ -34,7 +34,10 @@
         android:label="fragment_send"
         tools:layout="@layout/fragment_send">
         <argument
-            android:name="receiver"
+            android:name="receiverName"
+            app:argType="string" />
+        <argument
+            android:name="receiverIpAddress"
             app:argType="string" />
         <argument
             android:name="fileUri"

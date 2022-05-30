@@ -2,6 +2,7 @@ package com.android.share.manager.send
 
 import android.content.Context
 import androidx.documentfile.provider.DocumentFile
+import com.android.share.manager.preference.PreferenceManager
 import com.android.share.manager.send.SendManagerImpl.RequestState.*
 import com.android.share.util.Constants
 import com.android.share.util.readStringFromStream
@@ -25,6 +26,7 @@ class SendManagerImpl @Inject constructor(
     override val requestState = _requestState.asStateFlow()
 
     private lateinit var clientSocket: Socket
+    private val preferenceManager = PreferenceManager(context)
 
     override suspend fun sendRequest(
         receiver: String,
@@ -35,8 +37,9 @@ class SendManagerImpl @Inject constructor(
             clientSocket = Socket(receiver, 52525)
 
             clientSocket.getOutputStream().use { socketOutput ->
-                val name = documentFile.name ?: UUID.randomUUID().toString()
-                socketOutput.writeStringAsStream("${Constants.SOCKET_SHARE}:$name")
+                val fileName = documentFile.name ?: UUID.randomUUID().toString()
+                val senderName = preferenceManager.getString(Constants.USERNAME)
+                socketOutput.writeStringAsStream("${Constants.SOCKET_SHARE}:$fileName:$senderName")
 
                 clientSocket.getInputStream().use { socketInput ->
                     val respond = socketInput.readStringFromStream()
@@ -58,7 +61,7 @@ class SendManagerImpl @Inject constructor(
         val metadata = "$fileName:$fileSize".toByteArray()
         val bufferSize = ByteArray(DEFAULT_BUFFER_SIZE)
         var uploadProgress = 0L
-        var bytesRead = 0
+        var bytesRead: Int
 
         socketOutput.write(metadata.size)
         socketOutput.write(metadata)

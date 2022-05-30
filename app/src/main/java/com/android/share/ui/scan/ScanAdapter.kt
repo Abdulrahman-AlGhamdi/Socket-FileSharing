@@ -11,9 +11,9 @@ class ScanAdapter(
     private val scanAdapterCallback: ScanAdapterCallback
 ) : RecyclerView.Adapter<ScanAdapter.SenderViewHolder>() {
 
-    private val receiversList = mutableListOf<String>()
+    private val receiversList = mutableListOf<Pair<String, String>>()
 
-    fun setReceiversList(list: List<String>) {
+    fun setReceiversList(list: List<Pair<String, String>>) {
         receiversList.clear()
         receiversList.addAll(list)
         notifyDataSetChanged()
@@ -23,12 +23,11 @@ class ScanAdapter(
         private val binding: SenderUserItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(receiver: String) {
-            val uniqueNumber = receiver.substringAfterLast(".")
+        fun bind(receiver: Pair<String, String>) {
             val rnd = Random()
             val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
 
-            binding.name.text = uniqueNumber
+            binding.name.text = receiver.first
             binding.background.setBackgroundColor(color)
             binding.root.setOnClickListener { scanAdapterCallback.onReceiverClick(receiver) }
         }

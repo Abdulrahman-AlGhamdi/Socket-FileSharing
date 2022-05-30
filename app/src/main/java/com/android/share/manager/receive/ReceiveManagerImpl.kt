@@ -1,6 +1,7 @@
 package com.android.share.manager.receive
 
 import android.content.Context
+import com.android.share.manager.preference.PreferenceManager
 import com.android.share.manager.receive.ReceiveManagerImpl.ReceiveState.*
 import com.android.share.manager.receive.ReceiveManagerImpl.RequestState.*
 import com.android.share.model.network.NetworkModel
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.InputStream
-import java.io.OutputStream
 import java.net.Inet4Address
 import java.net.NetworkInterface
 import java.net.ServerSocket
@@ -36,19 +36,17 @@ class ReceiveManagerImpl @Inject constructor(
     override val requestState = _requestState.asStateFlow()
 
     override var receiveCallback: ReceiveCallback? = null
+    private val preferenceManager = PreferenceManager(context)
 
     private lateinit var serverSocket: ServerSocket
     private lateinit var clientSocket: Socket
-    private lateinit var clientInputStream: InputStream
-    private lateinit var clientOutputStream: OutputStream
 
     override suspend fun startReceiving() = withContext(Dispatchers.IO) {
         try {
             val network = getDeviceAddress()
             _receiveState.value = ReceiveInitializing
             serverSocket = ServerSocket(52525, 0, network.address)
-            val uniqueNumber = network.address.canonicalHostName.substringAfterLast(".")
-            _receiveState.value = ReceiveStarted(uniqueNumber)
+            _receiveState.value = ReceiveStarted
             while (!serverSocket.isClosed) waitForClient()
         } catch (exception: Exception) {
             exception.printStackTrace()
@@ -78,19 +76,22 @@ class ReceiveManagerImpl @Inject constructor(
             val clientRequest = socketInput.readStringFromStream()
 
             if (clientRequest != Constants.SOCKET_SCAN) {
-                val (connect, name) = clientRequest.split(":")
-                if (connect == Constants.SOCKET_SHARE) receiveRequest(socketInput, name)
-            } else return
+                val (connect, fileName, sender) = clientRequest.split(":")
+                if (connect == Constants.SOCKET_SHARE) receiveRequest(socketInput, fileName, sender)
+            } else {
+                val receiverName = preferenceManager.getString(Constants.USERNAME)
+                clientSocket.getOutputStream().use { it.writeStringAsStream(receiverName) }
+            }
         }
     }
 
     private suspend fun receiveRequest(
         socketInput: InputStream,
-        name: String
+        name: String,
+        sender: String
     ): Unit = clientSocket.getOutputStream().use { socketOutput ->
 
         delay(500)
-        val sender = clientSocket.inetAddress.hostName.substringAfterLast(".")
         _requestState.value = RequestConnect(sender, name)
 
         suspendCoroutine<Boolean> { continuation ->
@@ -136,11 +137,6 @@ class ReceiveManagerImpl @Inject constructor(
     }
 
     override fun closeServerSocket() {
-        if (::clientOutputStream.isInitialized) {
-            clientOutputStream.flush()
-            clientOutputStream.close()
-        }
-        if (::clientInputStream.isInitialized) clientInputStream.close()
         if (::clientSocket.isInitialized) clientSocket.close()
         if (::serverSocket.isInitialized) serverSocket.close()
     }
@@ -148,8 +144,8 @@ class ReceiveManagerImpl @Inject constructor(
     sealed class ReceiveState {
         object ReceiveIdle : ReceiveState()
         object ReceiveClosed : ReceiveState()
+        object ReceiveStarted : ReceiveState()
         object ReceiveInitializing : ReceiveState()
-        data class ReceiveStarted(val uniqueNumber: String) : ReceiveState()
     }
 
     sealed class RequestState {
@@ -157,6 +153,6 @@ class ReceiveManagerImpl @Inject constructor(
         object RequestFailed : RequestState()
         data class RequestComplete(val name: String) : RequestState()
         data class RequestProgress(val name: String, val progress: Int) : RequestState()
-        data class RequestConnect(val uniqueNumber: String, val name: String) : RequestState()
+        data class RequestConnect(val senderName: String, val name: String) : RequestState()
     }
 }

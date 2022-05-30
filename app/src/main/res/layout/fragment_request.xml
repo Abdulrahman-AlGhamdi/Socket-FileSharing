@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:visibility="visible"
-            tools:text="Sender number: $sender would like to share a $name file" />
+            tools:text="$sender would like to share a $name file" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress"

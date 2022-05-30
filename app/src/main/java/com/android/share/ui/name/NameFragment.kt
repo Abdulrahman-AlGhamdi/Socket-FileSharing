@@ -35,7 +35,7 @@ class NameFragment : BottomSheetDialogFragment() {
         binding.confirm.setOnClickListener {
             val name = binding.name.text.toString()
             if (name.isEmpty()) return@setOnClickListener
-            preferenceManager.putString(Constants.RECEIVER_NAME, name)
+            preferenceManager.putString(Constants.USERNAME, name)
             this.dismiss()
         }
 

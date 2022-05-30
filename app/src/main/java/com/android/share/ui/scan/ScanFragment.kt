@@ -44,9 +44,8 @@ class ScanFragment : Fragment(R.layout.fragment_scan) {
 
     private fun init() {
         scanAdapter = ScanAdapter(object : ScanAdapterCallback {
-            override fun onReceiverClick(receiver: Pair<String, String>) {
+            override fun onReceiverClick(name: String, address: String) {
                 if (fileUri != Uri.EMPTY && getFileFromUri(fileUri) != null) {
-                    val (name, address) = receiver
                     val action = directions.actionScanFragmentToSendFragment(name, address, fileUri)
                     findNavController().navigateTo(action, R.id.scanFragment)
                 } else requireView().showSnackBar("Please choose file in order to share it")

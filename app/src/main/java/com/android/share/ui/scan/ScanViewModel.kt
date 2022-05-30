@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.share.manager.scan.ScanManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -12,7 +13,7 @@ class ScanViewModel @Inject constructor(private val scanManager: ScanManager) : 
 
     val scanState = scanManager.scanState
 
-    fun startScanning() = viewModelScope.launch {
+    fun startScanning() = viewModelScope.launch(Dispatchers.IO) {
         scanManager.startScanning()
     }
 }

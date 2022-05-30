@@ -1,5 +1,7 @@
 package com.android.share.di
 
+import com.android.share.manager.imported.ImportedFilesManager
+import com.android.share.manager.imported.ImportedFilesManagerImpl
 import com.android.share.manager.receive.ReceiveManager
 import com.android.share.manager.receive.ReceiveManagerImpl
 import com.android.share.manager.scan.ScanManager
@@ -23,4 +25,7 @@ abstract class ManagerModule {
 
     @Binds
     abstract fun bindReceiveManager(receiveManagerImpl: ReceiveManagerImpl): ReceiveManager
+
+    @Binds
+    abstract fun bindImportedFilesManager(importedFilesManagerImpl: ImportedFilesManagerImpl): ImportedFilesManager
 }

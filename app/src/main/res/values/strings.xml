@@ -8,6 +8,7 @@
     <string name="receive_button_stop">Stop</string>
     <string name="receive_no_internet_message">Please enable the internet in order to be available\nto the sender and receive files</string>
     <string name="receive_ready_message">Your device is ready to receive files\nyou will be available to the senders to send you files</string>
+    <string name="receiver_imported_files">Imported Files</string>
 
     <!-- Scan Fragment Strings -->
     <string name="scan_fragment">Receivers Scan</string>
@@ -40,6 +41,12 @@
     <string name="name_error">Name must not be empty</string>
     <string name="name_note">NOTE: this name can be changed later at any time</string>
     <string name="name_confirm">Confirm</string>
+
+    <!-- Imported Files Fragment Strings -->
+    <string name="imported_fragment">Imported Files</string>
+    <string name="files">Files</string>
+    <string name="media">Media</string>
+    <string name="documents">Documents</string>
 
     <!-- Common Strings -->
     <string name="no_internet_header">No Internet Connection</string>

@@ -13,7 +13,22 @@
         <action
             android:id="@+id/action_receiveFragment_to_requestFragment"
             app:destination="@id/requestFragment" />
+        <action
+            android:id="@+id/action_receiveFragment_to_importedFilesFragment"
+            app:destination="@id/importedFilesFragment" />
     </fragment>
+
+    <dialog
+        android:id="@+id/requestFragment"
+        android:name="com.android.share.ui.request.RequestFragment"
+        android:label="Request"
+        tools:layout="@layout/fragment_request" />
+
+    <fragment
+        android:id="@+id/importedFilesFragment"
+        android:name="com.android.share.ui.imported.ImportedFilesFragment"
+        android:label="@string/imported_fragment"
+        tools:layout="@layout/fragment_imported_files" />
 
     <fragment
         android:id="@+id/scanFragment"
@@ -43,12 +58,6 @@
             android:name="fileUri"
             app:argType="android.net.Uri" />
     </dialog>
-
-    <dialog
-        android:id="@+id/requestFragment"
-        android:name="com.android.share.ui.request.RequestFragment"
-        android:label="Request"
-        tools:layout="@layout/fragment_request" />
 
     <dialog
         android:id="@+id/nameFragment"

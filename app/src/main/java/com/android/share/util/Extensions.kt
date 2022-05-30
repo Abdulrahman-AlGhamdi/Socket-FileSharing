@@ -90,6 +90,18 @@ fun InputStream.readStringFromStream(metadataSize: Int = 0): String {
     return byteArrayOutputStream.toString("UTF-8")
 }
 
+fun Long.getReadableSize(): String {
+    val fileSize = this
+    val fileSizeInKB = fileSize.div(1024)
+    val fileSizeInMB = fileSize.div(1024 * 1024)
+
+    return when {
+        fileSizeInKB < 1 -> "$fileSize B"
+        fileSizeInMB < 1 -> "$fileSizeInKB KB"
+        else -> "$fileSizeInMB MB"
+    }
+}
+
 fun OutputStream.writeStringAsStream(string: String) {
     val stringByteArray = string.toByteArray()
     this.write(stringByteArray.size)

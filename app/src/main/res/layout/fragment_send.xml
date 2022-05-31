@@ -45,6 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textColor="@color/gray"
             android:textSize="16sp"
             android:visibility="visible"
             tools:text="Are you sure you want to send this file to $receiver?" />

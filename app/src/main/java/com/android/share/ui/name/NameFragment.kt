@@ -41,8 +41,12 @@ class NameFragment : BottomSheetDialogFragment() {
 
         binding.name.addTextChangedListener {
             val name = it.toString()
-            if (name.isNotEmpty()) binding.nameHeader.error = null
-            else binding.nameHeader.error = getString(R.string.name_error)
+
+            when {
+                name.isEmpty() -> binding.nameHeader.error = getString(R.string.name_error_empty)
+                name.length == 20 -> binding.nameHeader.error = getString(R.string.name_error_max)
+                else -> binding.nameHeader.error = null
+            }
         }
     }
 }

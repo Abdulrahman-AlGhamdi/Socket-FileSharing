@@ -36,9 +36,6 @@
         android:label="fragment_scan"
         tools:layout="@layout/fragment_scan">
         <action
-            android:id="@+id/action_scanFragment_to_receiveFragment"
-            app:destination="@id/receiveFragment" />
-        <action
             android:id="@+id/action_scanFragment_to_sendFragment"
             app:destination="@id/sendFragment" />
     </fragment>
@@ -64,6 +61,5 @@
         android:name="com.android.share.ui.name.NameFragment"
         android:label="Name"
         tools:layout="@layout/fragment_name" />
-
 
 </navigation>

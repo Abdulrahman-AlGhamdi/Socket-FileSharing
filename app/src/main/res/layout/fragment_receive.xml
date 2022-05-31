@@ -55,7 +55,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:gravity="center"
-        android:text="@string/receive_ready_message"
+        android:textColor="@color/gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -80,13 +80,15 @@
         android:src="@drawable/icon_wifi_off"
         app:layout_constraintBottom_toTopOf="@+id/internet_header"
         app:layout_constraintEnd_toEndOf="@+id/internet_header"
-        app:layout_constraintStart_toStartOf="@+id/internet_header" />
+        app:layout_constraintStart_toStartOf="@+id/internet_header"
+        app:tint="@color/black" />
 
     <TextView
         android:id="@+id/internet_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/no_internet_header"
+        android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -100,16 +102,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/receive_no_internet_message"
+        android:textColor="@color/gray"
         app:layout_constraintEnd_toEndOf="@+id/internet_header"
         app:layout_constraintStart_toStartOf="@+id/internet_header"
         app:layout_constraintTop_toBottomOf="@+id/internet_header" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/receiving"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="animation, message" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/internet"

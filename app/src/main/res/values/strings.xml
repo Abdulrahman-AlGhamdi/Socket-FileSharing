@@ -36,9 +36,11 @@
     <string name="send_negative_cancel">Cancel</string>
 
     <!-- Name Fragment Strings -->
-    <string name="name_message">Please write your name in order to send and receive files</string>
-    <string name="name_hint">Enter your name</string>
-    <string name="name_error">Name must not be empty</string>
+    <string name="name_title">Enter Your Name</string>
+    <string name="name_message">Please write your name in order to send and receive files with others</string>
+    <string name="name_hint">Name</string>
+    <string name="name_error_empty">Name must not be empty</string>
+    <string name="name_error_max">"Maximum name length is 20 letter"</string>
     <string name="name_note">NOTE: this name can be changed later at any time</string>
     <string name="name_confirm">Confirm</string>
 

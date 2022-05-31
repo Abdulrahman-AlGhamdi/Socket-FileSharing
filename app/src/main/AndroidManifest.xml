@@ -16,6 +16,7 @@
 
         <activity
             android:name="com.android.share.ui.MainActivity"
+            android:configChanges="orientation|uiMode"
             android:exported="true"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"

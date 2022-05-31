@@ -61,7 +61,7 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
                 updateButtonStyle(buttonStatus)
                 binding.progress.visibility = View.GONE
                 binding.internet.visibility = View.GONE
-                binding.receiving.visibility = View.GONE
+                binding.animation.visibility = View.GONE
                 binding.receive.visibility = View.VISIBLE
             } else {
                 if (::receiveJob.isInitialized) receiveJob.cancel()
@@ -70,7 +70,7 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
                 updateButtonStyle(buttonStatus)
                 binding.receive.visibility = View.GONE
                 binding.progress.visibility = View.GONE
-                binding.receiving.visibility = View.GONE
+                binding.animation.visibility = View.GONE
                 binding.internet.visibility = View.VISIBLE
             }
         }
@@ -82,8 +82,8 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
                 ReceiveState.ReceiveInitializing -> {
                     buttonStatus = ButtonStatus.INITIALIZING
                     updateButtonStyle(buttonStatus)
-                    binding.receiving.visibility = View.GONE
                     binding.internet.visibility = View.GONE
+                    binding.animation.visibility = View.GONE
                     binding.receive.visibility = View.VISIBLE
                     binding.progress.visibility = View.VISIBLE
                 }
@@ -93,14 +93,14 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
                     binding.progress.visibility = View.GONE
                     binding.internet.visibility = View.GONE
                     binding.receive.visibility = View.VISIBLE
-                    binding.receiving.visibility = View.VISIBLE
+                    binding.animation.visibility = View.VISIBLE
                 }
                 ReceiveState.ReceiveClosed -> {
                     buttonStatus = ButtonStatus.NOT_ACTIVE
                     updateButtonStyle(buttonStatus)
-                    binding.receiving.visibility = View.GONE
                     binding.internet.visibility = View.GONE
                     binding.progress.visibility = View.GONE
+                    binding.animation.visibility = View.GONE
                     binding.receive.visibility = View.VISIBLE
                 }
                 ReceiveState.ReceiveIdle -> Unit
@@ -130,12 +130,20 @@ class ReceiveFragment : Fragment(R.layout.fragment_receive) {
             binding.receive.isEnabled = true
             binding.receive.setText(R.string.receive_button_stop)
             binding.receive.setBackgroundColor(resources.getColor(R.color.red, null))
+            binding.message.setText(R.string.receive_message_on)
         }
         ButtonStatus.NOT_ACTIVE -> {
             binding.receive.isEnabled = true
             binding.receive.setText(R.string.receive_button_start)
             binding.receive.setBackgroundColor(resources.getColor(R.color.green, null))
+            binding.message.setText(R.string.receive_message_off)
         }
+    }
+
+    override fun onStop() {
+        if (::receiveJob.isInitialized) receiveJob.cancel()
+        viewModel.closeServerSocket()
+        super.onStop()
     }
 
     private enum class ButtonStatus { ACTIVE, NOT_ACTIVE, INITIALIZING }

@@ -7,7 +7,8 @@
     <string name="receive_button_start">Start</string>
     <string name="receive_button_stop">Stop</string>
     <string name="receive_no_internet_message">Please enable the internet in order to be available\nto the sender and receive files</string>
-    <string name="receive_ready_message">Your device is ready to receive files\nyou will be available to the senders to send you files</string>
+    <string name="receive_message_on">Your device is ready to receive files\nDon\'t close the app otherwise the receive will stop</string>
+    <string name="receive_message_off">Please hit the start button to start receiving files</string>
     <string name="receiver_imported_files">Imported Files</string>
 
     <!-- Scan Fragment Strings -->

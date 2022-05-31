@@ -44,9 +44,7 @@
 
     <!-- Imported Files Fragment Strings -->
     <string name="imported_fragment">Imported Files</string>
-    <string name="files">Files</string>
-    <string name="media">Media</string>
-    <string name="documents">Documents</string>
+    <string name="imported_empty_header">No Imported Files</string>
 
     <!-- Common Strings -->
     <string name="no_internet_header">No Internet Connection</string>

@@ -54,8 +54,7 @@ class ScanFragment : Fragment(R.layout.fragment_scan) {
 
         binding.recycler.adapter = scanAdapter
         binding.toolbar.setNavigationOnClickListener {
-            val action = directions.actionScanFragmentToReceiveFragment()
-            findNavController().navigateTo(action, R.id.scanFragment)
+            findNavController().popBackStack(R.id.receiveFragment, false)
         }
 
         binding.toolbar.setOnMenuItemClickListener {

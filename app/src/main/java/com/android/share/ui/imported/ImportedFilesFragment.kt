@@ -68,7 +68,6 @@ class ImportedFilesFragment : Fragment(R.layout.fragment_imported_files) {
         viewModel.localFilesState.collect {
             when (it) {
                 FilesState.FilesEmpty -> {
-                    binding.emptyMessage.text = "No Imported Files"
                     binding.localList.visibility = View.GONE
                     binding.empty.visibility = View.VISIBLE
                 }

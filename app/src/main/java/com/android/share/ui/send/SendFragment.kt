@@ -55,6 +55,7 @@ class SendFragment : DialogFragment() {
                     binding.positive.setText(R.string.send_positive_send)
                     binding.negative.setText(R.string.send_negative_cancel)
                     binding.fileIcon.setImageResource(R.drawable.icon_image)
+                    binding.fileIcon.setColorFilter(resources.getColor(R.color.black, null))
                     binding.negative.setOnClickListener { dismiss() }
                     binding.positive.setOnClickListener {
                         if (::requestJob.isInitialized) requestJob.cancel()
@@ -79,6 +80,7 @@ class SendFragment : DialogFragment() {
                     binding.message.setText(R.string.send_failed_message)
                     binding.positive.setText(R.string.send_positive_dismiss)
                     binding.fileIcon.setImageResource(R.drawable.icon_error)
+                    binding.fileIcon.setColorFilter(resources.getColor(R.color.yellow, null))
                     binding.positive.setOnClickListener { dismiss() }
                     binding.progress.visibility = View.GONE
                     binding.negative.visibility = View.GONE
@@ -90,6 +92,7 @@ class SendFragment : DialogFragment() {
                     binding.message.setText(R.string.send_refused_message)
                     binding.positive.setText(R.string.send_positive_dismiss)
                     binding.fileIcon.setImageResource(R.drawable.icon_denied)
+                    binding.fileIcon.setColorFilter(resources.getColor(R.color.red, null))
                     binding.positive.setOnClickListener { dismiss() }
                     binding.progress.visibility = View.GONE
                     binding.negative.visibility = View.GONE
@@ -110,6 +113,7 @@ class SendFragment : DialogFragment() {
                     binding.message.text = getString(R.string.send_completed_message, it.name)
                     binding.positive.setText(R.string.send_positive_dismiss)
                     binding.fileIcon.setImageResource(R.drawable.icon_complete)
+                    binding.fileIcon.setColorFilter(resources.getColor(R.color.green, null))
                     binding.positive.setOnClickListener { dismiss() }
                     binding.progress.visibility = View.GONE
                     binding.negative.visibility = View.GONE

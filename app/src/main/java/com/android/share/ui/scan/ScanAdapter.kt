@@ -30,6 +30,7 @@ class ScanAdapter(
             binding.name.text = name
             binding.address.text = address
             binding.color.setCardBackgroundColor(randomColor)
+            binding.device.setColorFilter(itemView.resources.getColor(R.color.white, null))
             binding.root.setOnClickListener { scanAdapterCallback.onReceiverClick(name, address) }
             if (device == Constants.PHONE_DEVICE) binding.device.setImageResource(R.drawable.icon_phone)
         }

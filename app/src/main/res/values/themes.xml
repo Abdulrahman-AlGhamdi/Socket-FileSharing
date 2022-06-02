@@ -8,7 +8,7 @@
         <item name="colorOnPrimary">@color/white</item>
         <!-- Application Font -->
         <item name="android:fontFamily">@font/quest_regular</item>
-        <!-- Background Color -->
+        <!-- Application Background Color -->
         <item name="android:windowBackground">@color/white</item>
         <!-- List Divider Color -->
         <item name="android:listDivider">@color/gray</item>
@@ -23,7 +23,6 @@
 
     <style name="RoundedDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="shapeAppearanceOverlay">@style/DialogCorners</item>
-        <item name="android:background">@color/white</item>
     </style>
 
     <style name="DialogCorners">

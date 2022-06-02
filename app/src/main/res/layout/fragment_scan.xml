@@ -79,14 +79,14 @@
         app:layout_constraintBottom_toTopOf="@+id/empty_header"
         app:layout_constraintEnd_toEndOf="@+id/empty_header"
         app:layout_constraintStart_toStartOf="@+id/empty_header"
-        app:tint="@color/black" />
+        app:tint="@color/colorPrimary" />
 
     <TextView
         android:id="@+id/empty_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/scan_no_receivers_header"
-        android:textColor="@color/black"
+        android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -100,7 +100,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/scan_no_receivers_message"
-        android:textColor="@color/gray"
         app:layout_constraintEnd_toEndOf="@+id/empty_header"
         app:layout_constraintStart_toStartOf="@+id/empty_header"
         app:layout_constraintTop_toBottomOf="@+id/empty_header" />
@@ -113,14 +112,14 @@
         app:layout_constraintBottom_toTopOf="@+id/internet_header"
         app:layout_constraintEnd_toEndOf="@+id/internet_header"
         app:layout_constraintStart_toStartOf="@+id/internet_header"
-        app:tint="@color/black" />
+        app:tint="@color/colorPrimary" />
 
     <TextView
         android:id="@+id/internet_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/no_internet_header"
-        android:textColor="@color/black"
+        android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -134,7 +133,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/scan_no_internet_message"
-        android:textColor="@color/gray"
         app:layout_constraintEnd_toEndOf="@+id/internet_header"
         app:layout_constraintStart_toStartOf="@+id/internet_header"
         app:layout_constraintTop_toBottomOf="@+id/internet_header" />

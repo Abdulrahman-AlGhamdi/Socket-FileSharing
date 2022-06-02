@@ -46,7 +46,6 @@
     <string name="send_completed_message">%s file has been sent successfully</string>
     <string name="send_positive_send">Send</string>
     <string name="send_positive_dismiss">Dismiss</string>
-    <string name="send_negative_cancel">Cancel</string>
 
     <!-- Name Fragment Strings -->
     <string name="name_title">Enter Your Name</string>
@@ -60,7 +59,13 @@
     <!-- Imported Files Fragment Strings -->
     <string name="imported_fragment">Imported Files</string>
     <string name="imported_empty_header">No Imported Files</string>
+    <string name="imported_rename_title">Rename File</string>
+    <string name="imported_delete_title">Delete File</string>
+    <string name="imported_delete_message">Are you sure you want to delete %s file</string>
+    <string name="imported_rename_file">Rename</string>
+    <string name="imported_delete_file">Delete</string>
 
     <!-- Common Strings -->
     <string name="no_internet_header">No Internet Connection</string>
+    <string name="negative_cancel">Cancel</string>
 </resources>

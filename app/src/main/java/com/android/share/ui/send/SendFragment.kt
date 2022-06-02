@@ -53,7 +53,7 @@ class SendFragment : DialogFragment() {
                     binding.title.text = fileName
                     binding.message.text = getString(R.string.send_idle, args.receiverName)
                     binding.positive.setText(R.string.send_positive_send)
-                    binding.negative.setText(R.string.send_negative_cancel)
+                    binding.negative.setText(R.string.negative_cancel)
                     binding.fileIcon.setImageResource(R.drawable.icon_image)
                     binding.fileIcon.setColorFilter(resources.getColor(R.color.black, null))
                     binding.negative.setOnClickListener { dismiss() }

@@ -1,6 +1,5 @@
 package com.android.share.ui.imported
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.share.R
-import com.android.share.databinding.DialogRenameBinding
+import com.android.share.databinding.FileDeleteDialogBinding
+import com.android.share.databinding.FileRenameDialogBinding
 import com.android.share.databinding.FragmentImportedFilesBinding
 import com.android.share.manager.imported.ImportedFilesManagerImpl.FilesState
 import com.android.share.util.viewBinding
@@ -84,18 +84,24 @@ class ImportedFilesFragment : Fragment(R.layout.fragment_imported_files) {
     }
 
     private fun deleteDocument(file: File) {
-        AlertDialog.Builder(requireActivity()).apply {
-            this.setTitle("Delete File")
-            this.setMessage("Are you sure you want to delete this files")
-            this.setNegativeButton("Cancel", null)
-            this.setPositiveButton("Yes") { _, _ ->
-                viewModel.deleteFile(file)
-            }
-        }.create().show()
+        val dialogBinding = FileDeleteDialogBinding.inflate(LayoutInflater.from(requireContext()))
+
+        val dialog = MaterialAlertDialogBuilder(requireActivity(), R.style.RoundedDialog).apply {
+            this.setView(dialogBinding.root)
+            this.setCancelable(false)
+        }.create()
+
+        dialog.setOnShowListener {
+            dialogBinding.message.text = getString(R.string.imported_delete_message, file.name)
+            dialogBinding.negative.setOnClickListener { dialog.dismiss() }
+            dialogBinding.positive.setOnClickListener { viewModel.deleteFile(file) }
+        }
+
+        dialog.show()
     }
 
     private fun renameFile(file: File) {
-        val dialogBinding = DialogRenameBinding.inflate(LayoutInflater.from(requireContext()))
+        val dialogBinding = FileRenameDialogBinding.inflate(LayoutInflater.from(requireContext()))
 
         val dialog = MaterialAlertDialogBuilder(requireActivity(), R.style.RoundedDialog).apply {
             this.setView(dialogBinding.root)

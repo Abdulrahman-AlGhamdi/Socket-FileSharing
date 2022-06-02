@@ -15,7 +15,7 @@
     <string name="request_connect_title">Request Sending File</string>
     <string name="request_connect_message">%s  would like to share a %s file</string>
     <string name="request_failed_title">Something Went Wrong!</string>
-    <string name="request_failed_message">Receiving files has been stopped for unknown reason</string>
+    <string name="request_failed_message">Receiving files has been stopped</string>
     <string name="request_progress_title">Receiving File…</string>
     <string name="request_progress_message">Please wait for %s file to be transferred</string>
     <string name="request_complete_title">File Received</string>

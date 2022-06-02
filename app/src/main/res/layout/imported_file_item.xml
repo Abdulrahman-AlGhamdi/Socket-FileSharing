@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toStartOf="@+id/name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/name"
-        app:tint="@color/black"
+        app:tint="@color/colorPrimary"
         tools:ignore="ContentDescription" />
 
     <TextView
@@ -29,7 +29,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:textAlignment="viewStart"
-        android:textColor="@color/black"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/size"
         app:layout_constraintEnd_toStartOf="@+id/share"
         app:layout_constraintStart_toEndOf="@+id/icon"
@@ -42,7 +42,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:textAlignment="viewStart"
-        android:textColor="@color/gray"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/name"
@@ -59,7 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        app:tint="@color/black"
+        app:tint="@color/colorPrimary"
         tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

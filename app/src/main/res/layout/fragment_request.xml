@@ -4,10 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="24dp"
-    android:paddingTop="16sp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="24dp"
+    android:padding="24sp"
     tools:context=".ui.request.RequestFragment">
 
     <ImageView
@@ -25,7 +22,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:singleLine="true"
-        android:textColor="@color/black"
+        android:textColor="@color/colorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +44,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@color/gray"
             android:textSize="16sp"
             android:visibility="visible"
             tools:text="Are you sure you want to send this file to $receiver?" />
@@ -59,7 +55,6 @@
             android:layout_marginTop="16dp"
             android:max="100"
             android:visibility="gone"
-            app:indicatorColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
@@ -78,7 +73,7 @@
         android:insetTop="0dp"
         android:insetBottom="0dp"
         android:textStyle="bold"
-        app:backgroundTint="@color/black"
+        app:backgroundTint="@color/colorPrimary"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -97,13 +92,11 @@
         android:insetTop="0dp"
         android:insetBottom="0dp"
         android:textAllCaps="false"
-        android:textColor="@color/gray"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/positive"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/body"
-        app:strokeColor="@color/light_gray"
         tools:text="Cancel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

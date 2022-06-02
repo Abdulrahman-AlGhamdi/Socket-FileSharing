@@ -2,8 +2,8 @@ package com.android.share.ui.imported
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,9 +11,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.share.R
+import com.android.share.databinding.DialogRenameBinding
 import com.android.share.databinding.FragmentImportedFilesBinding
 import com.android.share.manager.imported.ImportedFilesManagerImpl.FilesState
 import com.android.share.util.viewBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -93,28 +95,28 @@ class ImportedFilesFragment : Fragment(R.layout.fragment_imported_files) {
     }
 
     private fun renameFile(file: File) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_rename, null)
-        val editText = dialogView.findViewById<EditText>(R.id.file_name)
+        val dialogBinding = DialogRenameBinding.inflate(LayoutInflater.from(requireContext()))
 
-        val renameDialog = AlertDialog.Builder(requireActivity()).apply {
-            this.setTitle("Rename File")
-            this.setView(dialogView)
-            this.setNegativeButton("Cancel", null)
-            this.setPositiveButton("Rename") { _, _ ->
-                val newName = editText.text.toString()
+        val dialog = MaterialAlertDialogBuilder(requireActivity(), R.style.RoundedDialog).apply {
+            this.setView(dialogBinding.root)
+            this.setCancelable(false)
+        }.create()
+
+        dialog.setOnShowListener {
+            dialogBinding.fileName.setText(file.name)
+            dialogBinding.fileName.requestFocus()
+            dialogBinding.fileName.selectAll()
+            dialogBinding.negative.setOnClickListener { dialog.dismiss() }
+
+            dialogBinding.positive.setOnClickListener {
+                val newName = dialogBinding.fileName.text.toString()
                 if (newName.isNotBlank()) {
                     viewModel.renameFile(file, newName)
                 }
             }
-        }.create()
-
-        renameDialog.setOnShowListener {
-            editText.setText(file.name)
-            editText.requestFocus()
-            editText.selectAll()
         }
 
-        renameDialog.show()
+        dialog.show()
     }
 
     override fun onDestroyView() {

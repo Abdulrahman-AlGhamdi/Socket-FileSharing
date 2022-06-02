@@ -94,7 +94,10 @@ class ImportedFilesFragment : Fragment(R.layout.fragment_imported_files) {
         dialog.setOnShowListener {
             dialogBinding.message.text = getString(R.string.imported_delete_message, file.name)
             dialogBinding.negative.setOnClickListener { dialog.dismiss() }
-            dialogBinding.positive.setOnClickListener { viewModel.deleteFile(file) }
+            dialogBinding.positive.setOnClickListener {
+                viewModel.deleteFile(file)
+                dialog.dismiss()
+            }
         }
 
         dialog.show()
@@ -113,11 +116,11 @@ class ImportedFilesFragment : Fragment(R.layout.fragment_imported_files) {
             dialogBinding.fileName.requestFocus()
             dialogBinding.fileName.selectAll()
             dialogBinding.negative.setOnClickListener { dialog.dismiss() }
-
             dialogBinding.positive.setOnClickListener {
                 val newName = dialogBinding.fileName.text.toString()
                 if (newName.isNotBlank()) {
                     viewModel.renameFile(file, newName)
+                    dialog.dismiss()
                 }
             }
         }

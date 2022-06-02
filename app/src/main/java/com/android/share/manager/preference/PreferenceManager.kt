@@ -10,7 +10,7 @@ class PreferenceManager(context: Context) {
         Context.MODE_PRIVATE
     )
 
-    fun putString(key: String, value: String) = sharedPreferences.edit().apply {
+    fun putString(key: String, value: String) = sharedPreferences.edit()?.apply {
         this.putString(key, value)
         this.apply()
     }

@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/receiveFragment"
         android:name="com.android.share.ui.receive.ReceiveFragment"
-        android:label="fragment_receive"
+        android:label="@string/receive_fragment"
         tools:layout="@layout/fragment_receive">
         <action
             android:id="@+id/action_receiveFragment_to_requestFragment"
@@ -21,7 +21,7 @@
     <dialog
         android:id="@+id/requestFragment"
         android:name="com.android.share.ui.request.RequestFragment"
-        android:label="Request"
+        android:label="@string/request_fragment"
         tools:layout="@layout/fragment_request" />
 
     <fragment
@@ -33,7 +33,7 @@
     <fragment
         android:id="@+id/scanFragment"
         android:name="com.android.share.ui.scan.ScanFragment"
-        android:label="fragment_scan"
+        android:label="@string/scan_fragment"
         tools:layout="@layout/fragment_scan">
         <action
             android:id="@+id/action_scanFragment_to_sendFragment"
@@ -43,7 +43,7 @@
     <dialog
         android:id="@+id/sendFragment"
         android:name="com.android.share.ui.send.SendFragment"
-        android:label="fragment_send"
+        android:label="@string/send_fragment"
         tools:layout="@layout/fragment_send">
         <argument
             android:name="receiverName"
@@ -59,7 +59,7 @@
     <dialog
         android:id="@+id/nameFragment"
         android:name="com.android.share.ui.name.NameFragment"
-        android:label="Name"
+        android:label="@string/name_fragment"
         tools:layout="@layout/fragment_name" />
 
 </navigation>

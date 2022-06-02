@@ -57,17 +57,6 @@ fun Activity.keepScreenOn(keep: Boolean) {
     else this.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 }
 
-fun File.getSize(fileSize: Long): String {
-    val fileSizeInKB = fileSize.div(1024)
-    val fileSizeInMB = fileSize.div(1024 * 1024)
-
-    return when {
-        fileSizeInKB < 1 -> "$fileSize B"
-        fileSizeInMB < 1 -> "$fileSizeInKB KB"
-        else -> "$fileSizeInMB MB"
-    }
-}
-
 fun Fragment.checkPermission(permission: String, isGranted: (Boolean) -> Unit) {
     if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED)
         isGranted(true) else isGranted(false)

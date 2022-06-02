@@ -27,19 +27,38 @@
         app:indicatorColor="@color/pink"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0.0"
-        app:lottie_autoPlay="true"
-        app:lottie_fileName="lottie/wave_animation.json"
-        app:lottie_loop="true" />
+        app:layout_constraintTop_toBottomOf="@+id/progress"
+        app:shimmer_auto_start="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/sender_user_shimmer_item" />
+
+            <include layout="@layout/sender_user_shimmer_item" />
+
+            <include layout="@layout/sender_user_shimmer_item" />
+
+            <include layout="@layout/sender_user_shimmer_item" />
+
+            <include layout="@layout/sender_user_shimmer_item" />
+
+            <include layout="@layout/sender_user_shimmer_item" />
+
+            <include layout="@layout/sender_user_shimmer_item" />
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
@@ -49,7 +68,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/progress"
         tools:listitem="@layout/sender_user_item" />
 
     <ImageView
@@ -125,7 +144,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="animation, progress" />
+        app:constraint_referenced_ids="shimmer, progress" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/result"

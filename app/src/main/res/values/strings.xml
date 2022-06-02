@@ -12,6 +12,7 @@
     <string name="receiver_imported_files">Imported Files</string>
 
     <!-- Request Fragment Strings -->
+    <string name="request_fragment">Receive Request</string>
     <string name="request_connect_title">Request Sending File</string>
     <string name="request_connect_message">%s  would like to share a %s file</string>
     <string name="request_failed_title">Something Went Wrong!</string>
@@ -32,7 +33,7 @@
     <string name="scan_rescan">Rescan</string>
 
     <!-- Send Fragment Strings -->
-    <string name="send_fragment">Receivers Scan</string>
+    <string name="send_fragment">Send File</string>
     <string name="send_started_title">Request Sent</string>
     <string name="send_started_message">Request sending file has been sent the receiver and waiting for the approval</string>
     <string name="send_failed_title">Something Went Wrong!</string>
@@ -48,6 +49,7 @@
     <string name="send_positive_dismiss">Dismiss</string>
 
     <!-- Name Fragment Strings -->
+    <string name="name_fragment">Username</string>
     <string name="name_title">Enter Your Name</string>
     <string name="name_message">Please write your name in order to send and receive files with others</string>
     <string name="name_hint">Name</string>

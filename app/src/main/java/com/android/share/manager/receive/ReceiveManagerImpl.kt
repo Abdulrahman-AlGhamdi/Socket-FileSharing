@@ -1,7 +1,6 @@
 package com.android.share.manager.receive
 
 import android.content.Context
-import android.util.Log
 import com.android.share.manager.preference.PreferenceManager
 import com.android.share.manager.receive.ReceiveManagerImpl.ReceiveState.*
 import com.android.share.manager.receive.ReceiveManagerImpl.RequestState.*

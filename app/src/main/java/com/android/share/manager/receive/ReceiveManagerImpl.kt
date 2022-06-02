@@ -1,6 +1,7 @@
 package com.android.share.manager.receive
 
 import android.content.Context
+import android.util.Log
 import com.android.share.manager.preference.PreferenceManager
 import com.android.share.manager.receive.ReceiveManagerImpl.ReceiveState.*
 import com.android.share.manager.receive.ReceiveManagerImpl.RequestState.*
@@ -41,7 +42,7 @@ class ReceiveManagerImpl @Inject constructor(
     private lateinit var serverSocket: ServerSocket
     private lateinit var clientSocket: Socket
 
-    override suspend fun startReceiving() = withContext(Dispatchers.IO) {
+    override suspend fun startReceiving(): Unit = withContext(Dispatchers.IO) {
         try {
             val network = getDeviceAddress()
             _receiveState.value = ReceiveInitializing
@@ -98,15 +99,27 @@ class ReceiveManagerImpl @Inject constructor(
         suspendCoroutine<Boolean> { continuation ->
             receiveCallback = object : ReceiveCallback {
                 override fun accept() {
-                    socketOutput.writeStringAsStream(Constants.SOCKET_ACCEPT)
-                    receiveFile(socketInput)
-                    continuation.resume(true)
+                    try {
+                        socketOutput.writeStringAsStream(Constants.SOCKET_ACCEPT)
+                        receiveFile(socketInput)
+                        continuation.resume(true)
+                    } catch (exception: Exception) {
+                        exception.printStackTrace()
+                        _receiveState.value = ReceiveClosed
+                        _requestState.value = RequestFailed
+                    }
                 }
 
                 override fun refuse() {
-                    socketOutput.writeStringAsStream(Constants.SOCKET_REFUSE)
-                    _requestState.value = RequestIdle
-                    continuation.resume(true)
+                    try {
+                        socketOutput.writeStringAsStream(Constants.SOCKET_REFUSE)
+                        _requestState.value = RequestIdle
+                        continuation.resume(true)
+                    } catch (exception: Exception) {
+                        exception.printStackTrace()
+                        _receiveState.value = ReceiveClosed
+                        _requestState.value = RequestFailed
+                    }
                 }
             }
         }

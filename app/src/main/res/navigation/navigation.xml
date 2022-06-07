@@ -3,26 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/receiveFragment">
+    app:startDestination="@id/broadcastFragment">
 
     <fragment
-        android:id="@+id/receiveFragment"
-        android:name="com.android.share.ui.receive.ReceiveFragment"
-        android:label="@string/receive_fragment"
-        tools:layout="@layout/fragment_receive">
+        android:id="@+id/broadcastFragment"
+        android:name="com.android.share.ui.broadcast.BroadcastFragment"
+        android:label="fragment_broadcast"
+        tools:layout="@layout/fragment_broadcast">
         <action
-            android:id="@+id/action_receiveFragment_to_requestFragment"
-            app:destination="@id/requestFragment" />
+            android:id="@+id/action_broadcastFragment_to_receiveFragment"
+            app:destination="@id/receiveFragment" />
         <action
-            android:id="@+id/action_receiveFragment_to_importedFilesFragment"
+            android:id="@+id/action_broadcastFragment_to_importedFilesFragment"
             app:destination="@id/importedFilesFragment" />
     </fragment>
 
     <dialog
-        android:id="@+id/requestFragment"
-        android:name="com.android.share.ui.request.RequestFragment"
-        android:label="@string/request_fragment"
-        tools:layout="@layout/fragment_request" />
+        android:id="@+id/receiveFragment"
+        android:name="com.android.share.ui.receive.ReceiveFragment"
+        android:label="fragment_receive"
+        tools:layout="@layout/fragment_receive" />
 
     <fragment
         android:id="@+id/importedFilesFragment"

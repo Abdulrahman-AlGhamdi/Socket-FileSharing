@@ -1,158 +1,94 @@
 package com.android.share.ui.receive
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.android.share.R
 import com.android.share.databinding.FragmentReceiveBinding
-import com.android.share.manager.connectivity.ConnectivityManager
-import com.android.share.manager.receive.ReceiveManagerImpl.ReceiveState
-import com.android.share.manager.receive.ReceiveManagerImpl.RequestState
-import com.android.share.util.navigateTo
-import com.android.share.util.viewBinding
-import dagger.hilt.android.AndroidEntryPoint
+import com.android.share.manager.broadcast.BroadcastManagerImpl.RequestState
+import com.android.share.ui.broadcast.BroadcastViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
-class ReceiveFragment : Fragment(R.layout.fragment_receive) {
+class ReceiveFragment : DialogFragment() {
 
-    private val binding by viewBinding(FragmentReceiveBinding::bind)
-    private val viewModel by activityViewModels<ReceiveViewModel>()
-    private val directions = ReceiveFragmentDirections
+    private lateinit var binding: FragmentReceiveBinding
+    private val viewModel by activityViewModels<BroadcastViewModel>()
 
-    private lateinit var receiveJob: Job
-    private lateinit var receiveStateJob: Job
-    private lateinit var requestStateJob: Job
-    private lateinit var buttonStatus: ButtonStatus
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        binding = FragmentReceiveBinding.inflate(layoutInflater)
+        this.isCancelable = false
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.RoundedDialog).apply {
+            this.setView(binding.root)
+            this.setCancelable(false)
+        }.create()
 
-        init()
-        receiveStateJob = getReceiveState()
-        requestStateJob = getRequestState()
-    }
+        getRequestState()
 
-    private fun init() {
-        binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
-
-        binding.toolbar.setOnMenuItemClickListener {
-            if (it.itemId != R.id.imported_files) return@setOnMenuItemClickListener false
-            val action = directions.actionReceiveFragmentToImportedFilesFragment()
-            findNavController().navigateTo(action, R.id.receiveFragment)
-            true
-        }
-
-        binding.receive.setOnClickListener {
-            if (buttonStatus == ButtonStatus.NOT_ACTIVE) {
-                if (::receiveJob.isInitialized) receiveJob.cancel()
-                receiveJob = viewModel.startReceiving()
-            } else viewModel.closeServerSocket()
-        }
-
-        ConnectivityManager(requireContext()).observe(viewLifecycleOwner) { hasInternet ->
-            if (hasInternet) {
-                buttonStatus = ButtonStatus.NOT_ACTIVE
-                updateButtonStyle(buttonStatus)
-                binding.progress.visibility = View.GONE
-                binding.internet.visibility = View.GONE
-                binding.animation.visibility = View.GONE
-                binding.receive.visibility = View.VISIBLE
-            } else {
-                if (::receiveJob.isInitialized) receiveJob.cancel()
-                viewModel.closeServerSocket()
-                buttonStatus = ButtonStatus.NOT_ACTIVE
-                updateButtonStyle(buttonStatus)
-                binding.receive.visibility = View.GONE
-                binding.progress.visibility = View.GONE
-                binding.animation.visibility = View.GONE
-                binding.internet.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private fun getReceiveState() = lifecycleScope.launch(Dispatchers.Main) {
-        viewModel.receiveState.collect {
-            when (it) {
-                ReceiveState.ReceiveInitializing -> {
-                    buttonStatus = ButtonStatus.INITIALIZING
-                    updateButtonStyle(buttonStatus)
-                    binding.internet.visibility = View.GONE
-                    binding.animation.visibility = View.GONE
-                    binding.receive.visibility = View.VISIBLE
-                    binding.progress.visibility = View.VISIBLE
-                }
-                ReceiveState.ReceiveStarted -> {
-                    buttonStatus = ButtonStatus.ACTIVE
-                    updateButtonStyle(buttonStatus)
-                    binding.progress.visibility = View.GONE
-                    binding.internet.visibility = View.GONE
-                    binding.receive.visibility = View.VISIBLE
-                    binding.animation.visibility = View.VISIBLE
-                }
-                ReceiveState.ReceiveClosed -> {
-                    buttonStatus = ButtonStatus.NOT_ACTIVE
-                    updateButtonStyle(buttonStatus)
-                    binding.internet.visibility = View.GONE
-                    binding.progress.visibility = View.GONE
-                    binding.animation.visibility = View.GONE
-                    binding.receive.visibility = View.VISIBLE
-                }
-                ReceiveState.ReceiveIdle -> Unit
-            }
-        }
+        return dialog
     }
 
     private fun getRequestState() = lifecycleScope.launch(Dispatchers.Main) {
         viewModel.requestState.collect {
             when (it) {
                 is RequestState.RequestConnect -> {
-                    val action = directions.actionReceiveFragmentToRequestFragment()
-                    findNavController().navigateTo(action, R.id.receiveFragment)
+                    binding.title.setText(R.string.request_connect_title)
+                    binding.message.text = getString(R.string.request_connect_message, it.senderName, it.name)
+                    binding.positive.setText(R.string.request_positive_accept)
+                    binding.negative.setText(R.string.request_negative_refuse)
+                    binding.fileIcon.setImageResource(R.drawable.icon_file)
+                    binding.fileIcon.setColorFilter(resources.getColor(R.color.black, null))
+                    binding.positive.setOnClickListener { viewModel.requestCallback(true) }
+                    binding.negative.setOnClickListener {
+                        viewModel.requestCallback(false)
+                        dismiss()
+                    }
+
+                    binding.progress.visibility = View.GONE
+                    binding.fileIcon.visibility = View.VISIBLE
+                    binding.positive.visibility = View.VISIBLE
+                    binding.negative.visibility = View.VISIBLE
+                }
+                RequestState.RequestFailed -> {
+                    binding.title.setText(R.string.request_failed_title)
+                    binding.message.setText(R.string.request_failed_message)
+                    binding.positive.setText(R.string.request_positive_dismiss)
+                    binding.fileIcon.setImageResource(R.drawable.icon_error)
+                    binding.fileIcon.setColorFilter(resources.getColor(R.color.yellow, null))
+                    binding.positive.setOnClickListener { dismiss() }
+                    binding.progress.visibility = View.GONE
+                    binding.negative.visibility = View.GONE
+                    binding.fileIcon.visibility = View.VISIBLE
+                    binding.positive.visibility = View.VISIBLE
+                }
+                is RequestState.RequestProgress -> {
+                    binding.title.setText(R.string.request_progress_title)
+                    binding.message.text = getString(R.string.request_progress_message, it.name)
+                    binding.progress.setProgress(it.progress, true)
+                    binding.negative.visibility = View.GONE
+                    binding.positive.visibility = View.GONE
+                    binding.fileIcon.visibility = View.GONE
+                    binding.progress.visibility = View.VISIBLE
+                }
+                is RequestState.RequestComplete -> {
+                    binding.title.setText(R.string.request_complete_title)
+                    binding.message.text = getString(R.string.request_complete_message, it.name)
+                    binding.positive.setText(R.string.request_positive_dismiss)
+                    binding.fileIcon.setImageResource(R.drawable.icon_complete)
+                    binding.fileIcon.setColorFilter(resources.getColor(R.color.green, null))
+                    binding.positive.setOnClickListener { dismiss() }
+                    binding.negative.visibility = View.GONE
+                    binding.progress.visibility = View.GONE
+                    binding.fileIcon.visibility = View.VISIBLE
+                    binding.positive.visibility = View.VISIBLE
                 }
                 else -> Unit
             }
         }
-    }
-
-    private fun updateButtonStyle(buttonStatus: ButtonStatus): Unit = when (buttonStatus) {
-        ButtonStatus.INITIALIZING -> {
-            binding.receive.text = null
-            binding.receive.isEnabled = false
-            binding.receive.setBackgroundColor(resources.getColor(R.color.gray, null))
-        }
-        ButtonStatus.ACTIVE -> {
-            binding.receive.isEnabled = true
-            binding.receive.setText(R.string.receive_button_stop)
-            binding.receive.setBackgroundColor(resources.getColor(R.color.red, null))
-            binding.message.setText(R.string.receive_message_on)
-        }
-        ButtonStatus.NOT_ACTIVE -> {
-            binding.receive.isEnabled = true
-            binding.receive.setText(R.string.receive_button_start)
-            binding.receive.setBackgroundColor(resources.getColor(R.color.green, null))
-            binding.message.setText(R.string.receive_message_off)
-        }
-    }
-
-    override fun onStop() {
-        if (::receiveJob.isInitialized) receiveJob.cancel()
-        viewModel.closeServerSocket()
-        super.onStop()
-    }
-
-    private enum class ButtonStatus { ACTIVE, NOT_ACTIVE, INITIALIZING }
-
-    override fun onDestroyView() {
-        if (::receiveJob.isInitialized) receiveJob.cancel()
-        if (::receiveStateJob.isInitialized) receiveStateJob.cancel()
-        if (::requestStateJob.isInitialized) requestStateJob.cancel()
-        viewModel.closeServerSocket()
-        super.onDestroyView()
     }
 }

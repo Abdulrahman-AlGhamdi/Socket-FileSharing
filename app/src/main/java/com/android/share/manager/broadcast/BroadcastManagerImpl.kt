@@ -1,9 +1,9 @@
-package com.android.share.manager.receive
+package com.android.share.manager.broadcast
 
 import android.content.Context
+import com.android.share.manager.broadcast.BroadcastManagerImpl.ReceiveState.*
+import com.android.share.manager.broadcast.BroadcastManagerImpl.RequestState.*
 import com.android.share.manager.preference.PreferenceManager
-import com.android.share.manager.receive.ReceiveManagerImpl.ReceiveState.*
-import com.android.share.manager.receive.ReceiveManagerImpl.RequestState.*
 import com.android.share.model.network.NetworkModel
 import com.android.share.util.Constants
 import com.android.share.util.readStringFromStream
@@ -25,9 +25,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.roundToInt
 
-class ReceiveManagerImpl @Inject constructor(
+class BroadcastManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) : ReceiveManager {
+) : BroadcastManager {
 
     private val _receiveState: MutableStateFlow<ReceiveState> = MutableStateFlow(ReceiveIdle)
     override val receiveState = _receiveState.asStateFlow()
@@ -35,7 +35,7 @@ class ReceiveManagerImpl @Inject constructor(
     private val _requestState: MutableStateFlow<RequestState> = MutableStateFlow(RequestIdle)
     override val requestState = _requestState.asStateFlow()
 
-    override var receiveCallback: ReceiveCallback? = null
+    override var requestCallback: RequestCallback? = null
     private val preferenceManager = PreferenceManager(context)
 
     private lateinit var serverSocket: ServerSocket
@@ -96,7 +96,7 @@ class ReceiveManagerImpl @Inject constructor(
         _requestState.value = RequestConnect(sender, name)
 
         suspendCoroutine<Boolean> { continuation ->
-            receiveCallback = object : ReceiveCallback {
+            requestCallback = object : RequestCallback {
                 override fun accept() {
                     try {
                         socketOutput.writeStringAsStream(Constants.SOCKET_ACCEPT)

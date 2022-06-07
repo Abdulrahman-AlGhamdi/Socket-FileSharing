@@ -1,9 +1,9 @@
 package com.android.share.di
 
+import com.android.share.manager.broadcast.BroadcastManager
+import com.android.share.manager.broadcast.BroadcastManagerImpl
 import com.android.share.manager.imported.ImportedFilesManager
 import com.android.share.manager.imported.ImportedFilesManagerImpl
-import com.android.share.manager.receive.ReceiveManager
-import com.android.share.manager.receive.ReceiveManagerImpl
 import com.android.share.manager.scan.ScanManager
 import com.android.share.manager.scan.ScanManagerImpl
 import com.android.share.manager.send.SendManager
@@ -24,7 +24,7 @@ abstract class ManagerModule {
     abstract fun bindSendManager(sendManagerImpl: SendManagerImpl): SendManager
 
     @Binds
-    abstract fun bindReceiveManager(receiveManagerImpl: ReceiveManagerImpl): ReceiveManager
+    abstract fun bindBroadcastManager(broadcastManagerImpl: BroadcastManagerImpl): BroadcastManager
 
     @Binds
     abstract fun bindImportedFilesManager(importedFilesManagerImpl: ImportedFilesManagerImpl): ImportedFilesManager

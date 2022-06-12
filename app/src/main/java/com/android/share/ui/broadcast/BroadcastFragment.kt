@@ -128,15 +128,15 @@ class BroadcastFragment : Fragment(R.layout.fragment_broadcast) {
         }
         ButtonStatus.ACTIVE -> {
             binding.receive.isEnabled = true
-            binding.receive.setText(R.string.receive_button_stop)
+            binding.receive.setText(R.string.broadcast_button_stop)
             binding.receive.setBackgroundColor(resources.getColor(R.color.red, null))
-            binding.message.setText(R.string.receive_message_on)
+            binding.message.setText(R.string.broadcast_message_on)
         }
         ButtonStatus.NOT_ACTIVE -> {
             binding.receive.isEnabled = true
-            binding.receive.setText(R.string.receive_button_start)
+            binding.receive.setText(R.string.broadcast_button_start)
             binding.receive.setBackgroundColor(resources.getColor(R.color.green, null))
-            binding.message.setText(R.string.receive_message_off)
+            binding.message.setText(R.string.broadcast_message_off)
         }
     }
 

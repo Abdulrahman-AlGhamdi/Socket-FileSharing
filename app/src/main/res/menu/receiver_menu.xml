@@ -5,7 +5,7 @@
     <item
         android:id="@+id/imported_files"
         android:icon="@drawable/icon_file"
-        android:title="@string/receiver_imported_files"
+        android:title="@string/broadcast_imported_files"
         app:showAsAction="always" />
 
 </menu>

@@ -37,10 +37,10 @@ class ReceiveFragment : DialogFragment() {
         viewModel.requestState.collect {
             when (it) {
                 is RequestState.RequestConnect -> {
-                    binding.title.setText(R.string.request_connect_title)
-                    binding.message.text = getString(R.string.request_connect_message, it.senderName, it.name)
-                    binding.positive.setText(R.string.request_positive_accept)
-                    binding.negative.setText(R.string.request_negative_refuse)
+                    binding.title.setText(R.string.receive_connect_title)
+                    binding.message.text = getString(R.string.receive_connect_message, it.senderName, it.name)
+                    binding.positive.setText(R.string.receive_positive_accept)
+                    binding.negative.setText(R.string.receive_negative_refuse)
                     binding.fileIcon.setImageResource(R.drawable.icon_file)
                     binding.fileIcon.setColorFilter(resources.getColor(R.color.black, null))
                     binding.positive.setOnClickListener { viewModel.requestCallback(true) }
@@ -55,9 +55,9 @@ class ReceiveFragment : DialogFragment() {
                     binding.negative.visibility = View.VISIBLE
                 }
                 RequestState.RequestFailed -> {
-                    binding.title.setText(R.string.request_failed_title)
-                    binding.message.setText(R.string.request_failed_message)
-                    binding.positive.setText(R.string.request_positive_dismiss)
+                    binding.title.setText(R.string.receive_failed_title)
+                    binding.message.setText(R.string.receive_failed_message)
+                    binding.positive.setText(R.string.receive_positive_dismiss)
                     binding.fileIcon.setImageResource(R.drawable.icon_error)
                     binding.fileIcon.setColorFilter(resources.getColor(R.color.yellow, null))
                     binding.positive.setOnClickListener { dismiss() }
@@ -67,8 +67,8 @@ class ReceiveFragment : DialogFragment() {
                     binding.positive.visibility = View.VISIBLE
                 }
                 is RequestState.RequestProgress -> {
-                    binding.title.setText(R.string.request_progress_title)
-                    binding.message.text = getString(R.string.request_progress_message, it.name)
+                    binding.title.setText(R.string.receive_progress_title)
+                    binding.message.text = getString(R.string.receive_progress_message, it.name)
                     binding.progress.setProgress(it.progress, true)
                     binding.negative.visibility = View.GONE
                     binding.positive.visibility = View.GONE
@@ -76,9 +76,9 @@ class ReceiveFragment : DialogFragment() {
                     binding.progress.visibility = View.VISIBLE
                 }
                 is RequestState.RequestComplete -> {
-                    binding.title.setText(R.string.request_complete_title)
-                    binding.message.text = getString(R.string.request_complete_message, it.name)
-                    binding.positive.setText(R.string.request_positive_dismiss)
+                    binding.title.setText(R.string.receive_complete_title)
+                    binding.message.text = getString(R.string.receive_complete_message, it.name)
+                    binding.positive.setText(R.string.receive_positive_dismiss)
                     binding.fileIcon.setImageResource(R.drawable.icon_complete)
                     binding.fileIcon.setColorFilter(resources.getColor(R.color.green, null))
                     binding.positive.setOnClickListener { dismiss() }

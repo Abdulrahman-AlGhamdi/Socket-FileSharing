@@ -2,28 +2,28 @@
     <!-- Application Name -->
     <string name="app_name">File Sharing</string>
 
-    <!-- Receive Fragment Strings -->
-    <string name="receive_fragment">Receive Files</string>
-    <string name="receive_button_start">Start</string>
-    <string name="receive_button_stop">Stop</string>
-    <string name="receive_no_internet_message">Please enable the internet in order to be available\nto the sender and receive files</string>
-    <string name="receive_message_on">Your device is ready to receive files\nDon\'t close the app otherwise the receive will stop</string>
-    <string name="receive_message_off">Please hit the start button to start receiving files</string>
-    <string name="receiver_imported_files">Imported Files</string>
+    <!-- Broadcast Fragment Strings -->
+    <string name="broadcast_fragment">Receive Files</string>
+    <string name="broadcast_button_start">Start</string>
+    <string name="broadcast_button_stop">Stop</string>
+    <string name="broadcast_no_internet_message">Please enable the internet in order to be available\nto the sender and receive files</string>
+    <string name="broadcast_message_on">Your device is ready to receive files\nDon\'t close the app otherwise the receive will stop</string>
+    <string name="broadcast_message_off">Please hit the start button to start receiving files</string>
+    <string name="broadcast_imported_files">Imported Files</string>
 
-    <!-- Request Fragment Strings -->
-    <string name="request_fragment">Receive Request</string>
-    <string name="request_connect_title">Request Sending File</string>
-    <string name="request_connect_message">%s  would like to share a %s file</string>
-    <string name="request_failed_title">Something Went Wrong!</string>
-    <string name="request_failed_message">Receiving files has been stopped</string>
-    <string name="request_progress_title">Receiving File…</string>
-    <string name="request_progress_message">Please wait for %s file to be transferred</string>
-    <string name="request_complete_title">File Received</string>
-    <string name="request_complete_message">%s file has been received successfully</string>
-    <string name="request_positive_dismiss">Dismiss</string>
-    <string name="request_positive_accept">Accept</string>
-    <string name="request_negative_refuse">Refuse</string>
+    <!-- Receive Fragment Strings -->
+    <string name="receive_fragment">Receive Request</string>
+    <string name="receive_connect_title">Request Sending File</string>
+    <string name="receive_connect_message">%s  would like to share a %s file</string>
+    <string name="receive_failed_title">Something Went Wrong!</string>
+    <string name="receive_failed_message">Receiving files has been stopped</string>
+    <string name="receive_progress_title">Receiving File…</string>
+    <string name="receive_progress_message">Please wait for %s file to be transferred</string>
+    <string name="receive_complete_title">File Received</string>
+    <string name="receive_complete_message">%s file has been received successfully</string>
+    <string name="receive_positive_dismiss">Dismiss</string>
+    <string name="receive_positive_accept">Accept</string>
+    <string name="receive_negative_refuse">Refuse</string>
 
     <!-- Scan Fragment Strings -->
     <string name="scan_fragment">Receivers Scan</string>

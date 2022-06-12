@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/receiver_menu"
-        app:title="@string/receive_fragment"
+        app:title="@string/broadcast_fragment"
         app:titleCentered="true" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -38,7 +38,7 @@
         android:layout_height="100dp"
         android:insetTop="0dp"
         android:insetBottom="0dp"
-        android:text="@string/receive_button_start"
+        android:text="@string/broadcast_button_start"
         android:textStyle="bold"
         app:backgroundTint="@color/green"
         app:cornerRadius="50dp"
@@ -100,7 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/receive_no_internet_message"
+        android:text="@string/broadcast_no_internet_message"
         app:layout_constraintEnd_toEndOf="@+id/internet_header"
         app:layout_constraintStart_toStartOf="@+id/internet_header"
         app:layout_constraintTop_toBottomOf="@+id/internet_header" />

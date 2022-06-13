@@ -28,7 +28,6 @@ class ScanAdapter(
             val randomColor = itemView.resources.getColor(Constants.colorList.random(), null)
 
             binding.name.text = name
-            binding.address.text = address
             binding.color.setCardBackgroundColor(randomColor)
             binding.device.setColorFilter(itemView.resources.getColor(R.color.white, null))
             binding.root.setOnClickListener { scanAdapterCallback.onReceiverClick(name, address) }

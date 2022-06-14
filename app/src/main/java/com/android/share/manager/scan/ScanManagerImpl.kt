@@ -39,8 +39,6 @@ class ScanManagerImpl @Inject constructor() : ScanManager {
             async {
                 ipAddresses.mapNotNull { ipAddress ->
                     _scanState.value = Progress(networkSize, counter++)
-                    val isReachable = ipAddress.isReachable(250)
-                    if (!isReachable) return@mapNotNull null
                     val receiver = isTcpPortOpen(ipAddress)
                     if (receiver != null) "$receiver:${ipAddress.canonicalHostName}" else null
                 }
